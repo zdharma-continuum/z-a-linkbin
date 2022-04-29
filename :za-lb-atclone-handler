@@ -54,10 +54,16 @@ if (( ${+ICE[lbin]} )) {
                     ((i++))
                     case $i in
                         1)
-                            files=( $dir/${id_as:t}*(Nnon.) )
+                            files=( $dir/${id_as:t}(Nnon.) )
+                            if [[ ! -d $files[1] ]]; then
+                                +zinit-message "{pre}linkbin annex: {msg2}Found no plugin dir, renaming {ice}$files[1]{msg2} to {ice} $id_as {rst}"
+                            fi
                         ;;
                         2)
-                            [[ -n $plugin ]] && files=( $dir/$plugin*(Nnon.) )
+                            [[ -n $plugin ]] && files=( $dir/$plugin(Nnon.) )
+                            if [[ ! -d $files[1] ]]; then
+                                +zinit-message "{pre}linkbin annex: {msg2}Found no plugin dir, renaming {ice}$files[1]{msg2} to {ice} $id_as {rst}"
+                            fi
                         ;;
                         3)
                             [[ -n $url ]] && files=( $dir/${url:t}(Nnon.) )
@@ -69,7 +75,7 @@ if (( ${+ICE[lbin]} )) {
                             files=( $dir/**/${id_as:t} )
                         ;;
                         6)
-                            [[ -n $plugin ]] && files=( "$dir/bin/$plugin"*(Nnon.) )
+                            [[ -n $plugin ]] && files=( "$dir/bin/$plugin"(Nnon.) )
                         ;;
                         7)
                             [[ -n $url ]] && files=( $dir/**/${url:t}(Nnon.) )
