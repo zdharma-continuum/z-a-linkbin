@@ -70,11 +70,11 @@ if (( ${+ICE[lbin]} )) {
                             +zinit-message "{pre}linkbin annex: {msg2} case 4 found -> {ice}${files[1]}{rst}"
                         ;;
                         5)
-                            files=( $dir/**/${id_as:t} )
+                            files=( $dir/bin/${id_as:t} )
                             +zinit-message "{pre}linkbin annex: {msg2} case 5 found -> {ice}${files[1]}{rst}"
                         ;;
                         6)
-                            [[ -n $plugin ]] && files=( "$dir/bin/$plugin"(Nnon.) )
+                            [[ -n $plugin ]] && files=( "$dir/**/$plugin"(Nnon.) )
                             +zinit-message "{pre}linkbin annex: {msg2} case 6 found -> {ice}${files[1]}{rst}"
                         ;;
                         7)
