@@ -11,6 +11,14 @@ if [[ "$1" = plugin ]] {
     local type="$1" url="$2" id_as="$3" dir="${4#%}" hook="$5"
 }
 
++zinit-message "{pre}linkbin annex:{ice} \
+    lbin{info}paramaters: {msg2} \
+    type   = {obj2}$type  {msg2} \
+    user   = {obj2}$user  {msg2} \
+    plugin = {obj2}$3     {msg2} \
+    id_as  = {obj2}$4     {msg2} \
+    dir    = {obj2}${5#%} {rst}"
+
 #
 # lbin'' ice – creation of links
 #
