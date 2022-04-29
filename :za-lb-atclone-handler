@@ -56,7 +56,7 @@ if (( ${+ICE[lbin]} )) {
                         1)
                             files=( $dir/${id_as:t}(Nnon.) )
                             if [[ ! -d $files[1] ]]; then
-                                +zinit-message "{pre}linkbin annex: {msg2}Found no plugin dir, renaming {ice}$files[1]{msg2} to {ice} $id_as {rst}"
+                                +zinit-message "{pre}linkbin annex: {msg2}Found no plugin dir, renaming `{ice}$files[1]'{msg2} to {ice} $id_as {rst}"
                             fi
                         ;;
                         2)
