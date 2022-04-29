@@ -54,10 +54,10 @@ if (( ${+ICE[lbin]} )) {
                     ((i++))
                     case $i in
                         1)
-                            files=( $dir/${id_as:t}(Nnon.) )
+                            files=( $dir/${id_as:t}*(Nnon.) )
                         ;;
                         2)
-                            [[ -n $plugin ]] && files=( $dir/$plugin(Nnon.) )
+                            [[ -n $plugin ]] && files=( $dir/$plugin*(Nnon.) )
                         ;;
                         3)
                             [[ -n $url ]] && files=( $dir/${url:t}(Nnon.) )
@@ -69,7 +69,7 @@ if (( ${+ICE[lbin]} )) {
                             files=( $dir/**/${id_as:t} )
                         ;;
                         6)
-                            [[ -n $plugin ]] && files=( $dir/**/$plugin(Nnon.) )
+                            [[ -n $plugin ]] && files=( "$dir/bin/$plugin"*(Nnon.) )
                         ;;
                         7)
                             [[ -n $url ]] && files=( $dir/**/${url:t}(Nnon.) )
