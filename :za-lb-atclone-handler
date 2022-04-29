@@ -50,7 +50,7 @@ if (( ${+ICE[lbin]} )) {
             if [[ -z $lbin && ${#lbins} -eq 0 ]] || [[ $lbin = "!" && ${#lbins} -eq 1 ]] {
                 local -a files
                 integer i=0
-                while [[ ! -f $files[1] && $i -lt 9 ]]; do
+                while [[ ! -f $files[1] && $i -lt 13 ]]; do
                     ((i++))
                     case $i in
                         1)
@@ -66,23 +66,33 @@ if (( ${+ICE[lbin]} )) {
                             files=( $dir/*(*Nnon.:t) )
                         ;;
                         5)
-                            files=( $dir/**/${id_as:t} )
+                            files=( $dir/**/bin/${id_as:t} )
+                            [[ -n $plugin ]] && files=( $dir/**/bin/$plugin(Nnon.) )
                         ;;
                         6)
-                            [[ -n $plugin ]] && files=( $dir/**/$plugin(Nnon.) )
+                            files=( $dir/**/${id_as:t} )
                         ;;
                         7)
-                            [[ -n $url ]] && files=( $dir/**/${url:t}(Nnon.) )
+                            [[ -n $plugin ]] && [[ ! -d $plugin ]] && mv "$plugin"* "$plugin" && files=( $dir/$plugin(Nnon.) )
                         ;;
                         8)
-                            files=( $dir/**/*(*Nnon.:t) )
+                            [[ -n $plugin ]] && files=( $dir/**/bin/$plugin(Nnon.) )
                         ;;
                         9)
+                            [[ -n $plugin ]] && files=( $dir/**/$plugin(Nnon.) )
+                        ;;
+                        10)
+                            [[ -n $url ]] && files=( $dir/**/${url:t}(Nnon.) )
+                        ;;
+                        11)
+                            files=( $dir/**/*(*Nnon.:t) )
+                        ;;
+                        12)
                             +zinit-message "{pre}linkbin annex: {error}The automatic-empty {ice}lbin{error} ice didn't find any executable files{rst}"
                         ;;
                     esac
                 done
-                [[ $i -gt 8 ]] && break
+                [[ $i -gt 11 ]] && break
                 lbin=$files[1]
             } else {
                 lbin=${lbin#!}
