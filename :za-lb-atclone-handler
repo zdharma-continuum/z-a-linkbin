@@ -7,17 +7,23 @@ setopt extendedglob warncreateglobal typesetsilent noshortloops nullglob
 
 if [[ "$1" = plugin ]] {
     local type="$1" user="$2" plugin="$3" id_as="$4" dir="${5#%}" hook="$6"
+    +zinit-message "{pre}linkbin annex:{ice} \
+        lbin{info}paramaters:  {msg2} \
+        type   = {obj2}$type   {msg2} \
+        user   = {obj2}$user   {msg2} \
+        plugin = {obj2}$plugin {msg2} \
+        id_as  = {obj2}$id_as  {msg2} \
+        dir    = {obj2}$dir    {rst}"
 } else {
     local type="$1" url="$2" id_as="$3" dir="${4#%}" hook="$5"
+    +zinit-message "{pre}linkbin annex:{ice} \
+        lbin{info}paramaters: {msg2} \
+        type   = {obj2}$type  {msg2} \
+        url    = {obj2}$url   {msg2} \
+        id_as  = {obj2}$id_as {msg2} \
+        dir    = {obj2}$dir   {msg2} \
+        hoo    = {obj2}$hook  {rst}"
 }
-
-+zinit-message "{pre}linkbin annex:{ice} \
-    lbin{info}paramaters: {msg2} \
-    type   = {obj2}$type  {msg2} \
-    user   = {obj2}$user  {msg2} \
-    plugin = {obj2}$3     {msg2} \
-    id_as  = {obj2}$4     {msg2} \
-    dir    = {obj2}${5#%} {rst}"
 
 #
 # lbin'' ice – creation of links
