@@ -55,38 +55,30 @@ if (( ${+ICE[lbin]} )) {
                     case $i in
                         1)
                             files=( $dir/${id_as:t}(Nnon.) )
-                            +zinit-message "{pre}linkbin annex: {msg2} case 1 found -> {ice}${files[1]}{rst}"
                         ;;
                         2)
                             [[ -n $plugin ]] && files=( $dir/$plugin(Nnon.) )
-                            +zinit-message "{pre}linkbin annex: {msg2} case 2 found -> {ice}${files[1]}{rst}"
                         ;;
                         3)
                             [[ -n $url ]] && files=( $dir/${url:t}(Nnon.) )
-                            +zinit-message "{pre}linkbin annex: {msg2} case 3 found -> {ice}${files[1]}{rst}"
                         ;;
                         4)
                             files=( $dir/*(*Nnon.:t) )
-                            +zinit-message "{pre}linkbin annex: {msg2} case 4 found -> {ice}${files[1]}{rst}"
                         ;;
                         5)
-                            files=( $dir/bin/${id_as:t} )
-                            +zinit-message "{pre}linkbin annex: {msg2} case 5 found -> {ice}${files[1]}{rst}"
+                            files=( $dir/**/${id_as:t} )
                         ;;
                         6)
-                            [[ -n $plugin ]] && files=( "$dir/**/$plugin"(Nnon.) )
-                            +zinit-message "{pre}linkbin annex: {msg2} case 6 found -> {ice}${files[1]}{rst}"
+                            [[ -n $plugin ]] && files=( $dir/**/$plugin(Nnon.) )
                         ;;
                         7)
                             [[ -n $url ]] && files=( $dir/**/${url:t}(Nnon.) )
-                            +zinit-message "{pre}linkbin annex: {msg2} case 7 found -> {ice}${files[1]}{rst}"
                         ;;
                         8)
                             files=( $dir/**/*(*Nnon.:t) )
-                            +zinit-message "{pre}linkbin annex: {msg2} case 8 found -> {ice}${files[1]}{rst}"
                         ;;
                         9)
-                            +zinit-message "{pre}linkbin annex: {msg2} case 9 {error}  The automatic-empty {ice}lbin{error} ice didn't find any executable files{rst}"
+                            +zinit-message "{pre}linkbin annex: {error}The automatic-empty {ice}lbin{error} ice didn't find any executable files{rst}"
                         ;;
                     esac
                 done
@@ -98,12 +90,13 @@ if (( ${+ICE[lbin]} )) {
             }
 
             srcdst=( ${(@s.->.)lbin} )
-            +zinit-message "{pre}linkbin annex:{info} srcdst #1 {msg2}${srcdst[@]}{rst}"
+            +zinit-message "{pre}linkbin:{info} split on -> results -- {msg2}${srcdst[@]}{rst}"
+
             srcdst=( "${srcdst[@]//((#s)[[:space:]]##|[[:space:]]##(#e))/}" )
-            +zinit-message "{pre}linkbin annex:{info} srcdst #2 {msg2}${srcdst[@]}{rst}"
+            +zinit-message "{pre}linkbin:{info} trim whitespace -- {msg2}${srcdst[@]}{rst}"
 
             # Substitute the standard keywords and param''-s
-            @zinit-substitute 'srcdst[1]' 'plugin'
+            @zinit-substitute 'srcdst[1]' 'srcdst[2]'
 
             local -a fnames
             local fname
@@ -118,13 +111,14 @@ if (( ${+ICE[lbin]} )) {
                 srcdst[1]="$fname"
 
                 local target_binary="${${(M)srcdst[1]:#/*}:-$dir/${srcdst[1]}}"
-                local fnam="${plugin:-$srcdst[2]}"
+                local fnam="${srcdst[2]:-${srcdst[1]:t}}"
                 local file="$ZPFX/bin/$fnam"
+
                 +zinit-message "{pre}linkbin annex:{ice} \
-                    lbin{info}paramaters: {msg2} \
-                    target_binary = {obj2}$target_binary {msg2} \
-                    fnam = {obj2}$fnam {msg2} \
-                    file = {obj2}$file {msg2}"
+                  lbin{info}paramaters: {msg2} \
+                  target_binary = {obj2}$target_binary {msg2} \
+                  fnam = {obj2}$fnam {msg2} \
+                  file = {obj2}$file {msg2}"
 
                 command chmod +x "$target_binary"
                 command ln -f "$sym" "$target_binary" "$file"
@@ -146,4 +140,4 @@ if (( ${+ICE[lbin]} )) {
     )
 }
 
-# vim:ft=zsh:sw=4:sts=4:et
+# vim:ft=zsh:sw=2:sts=2:et
