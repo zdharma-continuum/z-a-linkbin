@@ -6,21 +6,21 @@ emulate -RL zsh
 setopt extendedglob warncreateglobal typesetsilent noshortloops nullglob
 
 if [[ "$1" = plugin ]] {
-    local type="$1" user="$2" plugin="$3" id_as="$4" dir="${5#%}" hook="$6"
-    +zinit-message -n "{pre}lbin:{info} \
-      type   ={obj2}$type  {msg2} \
-      user   ={obj2}$user  {msg2} \
-      plugin ={obj2}$plugin{msg2} \
-      id_as  ={obj2}$id_as {msg2} \
-      dir    ={obj2}$dir   {rst}"
+  local type="$1" user="$2" plugin="$3" id_as="$4" dir="${5#%}" hook="$6"
+  +zinit-message "{pre}lbin:{info} \
+    type   = {obj2}$type  {msg2} \
+    user   = {obj2}$user  {msg2} \
+    plugin = {obj2}$plugin{msg2} \
+    id_as  = {obj2}$id_as {msg2} \
+    dir    = {obj2}$dir   {rst}"
 } else {
-    local type="$1" url="$2" id_as="$3" dir="${4#%}" hook="$5"
-    +zinit-message -n "{pre}lbin:{info} \
-      type  = {obj2}$type {msg2} \
-      url   = {obj2}$url  {msg2} \
-      id_as = {obj2}$id_as{msg2} \
-      dir   = {obj2}$dir  {msg2} \
-      hook  = {obj2}$hook {rst}"
+  local type="$1" url="$2" id_as="$3" dir="${4#%}" hook="$5"
+  +zinit-message "{pre}lbin:{info} \
+    type  = {obj2}$type {msg2} \
+    url   = {obj2}$url  {msg2} \
+    id_as = {obj2}$id_as{msg2} \
+    dir   = {obj2}$dir  {msg2} \
+    hook  = {obj2}$hook {rst}"
 }
 
 #
@@ -28,126 +28,129 @@ if [[ "$1" = plugin ]] {
 #
 
 if (( ${+ICE[lbin]} )) {
-    (( ${+ICE[sbin]} )) && {
-        (( !OPTS[opt_-q,--quiet] )) && \
-        +zinit-message "{pre}linkbin annex: {ice}sbin{warn} ice detected, not doing anything...{rst}"
-        return;
+  (( ${+ICE[sbin]} )) && {
+    (( !OPTS[opt_-q,--quiet] )) && {
+      +zinit-message "{pre}z-a-lbin: {ice}sbin{warn} ice detected, not doing anything...{rst}"
+      return;
     }
-    local -a lbins srcdst
-    lbins=( ${(s.;.)ICE[lbin]} )
+  }
 
-    local lbin sym="-P"
+  local lbin sym="-P"
+  local -a lbins srcdst
+  lbins=( ${(s.;.)ICE[lbin]} )
 
-    (
-        # go to plugin dir for globbing through eval
-        builtin cd -q "$dir" || return
+  (
+    # go to plugin dir for globbing through eval
+    builtin cd -q "$dir" || return
 
-        for lbin ( $lbins "" ) {
-            [[ ${lbin[1]} = "!" ]] && sym="-s"
+    for lbin ( $lbins "" ) {
+    [[ ${lbin[1]} = "!" ]] && sym="-s"
 
-            if [[ -z $lbin && ${#lbins} -eq 0 ]] || [[ $lbin = "!" && ${#lbins} -eq 1 ]] {
-                local -a files
-                integer i=0
-                while [[ ! -f $files[1] && $i -lt 9 ]]; do
-                    ((i++))
-                    case $i in
-                        1)
-                            # search for binary with id-as value
-                            files=( $dir/${id_as:t}(Nnon.) )
-                            +zinit-message "{pre}linkbin annex: {error}The automatic-empty {ice}lbin{error} ice didn't find any executable files{rst}"
-                        ;;
-                        2)
-                          # search for binary with plugin name (e.g., repository name)
-                            [[ -n $plugin ]] && files=( $dir/$plugin(Nnon.) )
-                            +zinit-message "{pre}z-a-lbin: {ice}step 2{info2} -- {msg2} ${files[@]}{rst}"
-                        ;;
-                        3)
-                            [[ -n $url ]] && files=( $dir/${url:t}(Nnon.) )
-                            +zinit-message "{pre}z-a-lbin: {ice}step 3{info2} -- {msg2} ${files[@]}{rst}"
-                        ;;
-                        4)
-                            files=( $dir/*(*Nnon.:t) )
-                            +zinit-message "{pre}z-a-lbin: {ice}step 4{info2} -- {msg2} ${files[@]}{rst}"
-                        ;;
-                        5)
-                            files=( $dir/bin/${id_as:t} )
-                            +zinit-message "{pre}z-a-lbin: {ice}step 5{info2} -- {msg2} ${files[@]}{rst}"
-                        ;;
-                        6)
-                            [[ -n $plugin ]] && files=( $dir/bin/$plugin(Nnon.) )
-                            +zinit-message "{pre}z-a-lbin: {ice}step 6{info2} -- {msg2} ${files[@]}{rst}"
-                        ;;
-                        7)
-                            [[ -n $url ]] && files=( $dir/**/${url:t}(Nnon.) )
-                            +zinit-message "{pre}z-a-lbin: {ice}step 7{info2} -- {msg2} ${files[@]}{rst}"
-                        ;;
-                        8)
-                            files=( $dir/**/*(*Nnon.:t) )
-                            +zinit-message "{pre}z-a-lbin: {ice}step 8{info2} -- {msg2} ${files[@]}{rst}"
-                        ;;
-                        9)
-                            +zinit-message "{pre}linkbin annex: {error}The automatic-empty {ice}lbin{error} ice didn't find any executable files{rst}"
-                        ;;
-                    esac
-                done
-                [[ $i -gt 8 ]] && break
-                lbin=$files[1]
-            } else {
-                lbin=${lbin#!}
-                [[ -z $lbin ]] && continue
+      if [[ -z $lbin && ${#lbins} -eq 0 ]] || [[ $lbin = "!" && ${#lbins} -eq 1 ]] {
+      local -a files
+      integer i=0
+      while [[ ! -f $files[1] && $i -lt 9 ]]; do
+      ((i++))
+        case $i in
+        1) # search for binary with id-as value
+          files=( $dir/${id_as:t}(Nnon.) )
+          +zinit-message "{pre}z-a-lbin: {error}The automatic-empty {ice}lbin{error} ice didn't find any executable files{rst}"
+          ;;
+        2) # search for binary with plugin name (e.g., repository name)
+          [[ -n $plugin ]] && files=( $dir/$plugin(Nnon.) )
+          +zinit-message "{pre}z-a-lbin: {ice}step 2{info2} -- {msg2} ${files[@]}{rst}"
+          ;;
+        3)
+          [[ -n $url ]] && files=( $dir/${url:t}(Nnon.) )
+          +zinit-message "{pre}z-a-lbin: {ice}step 3{info2} - {msg2}${files[@]}{rst}"
+          ;;
+        4)
+          files=( $dir/*(*Nnon.:t) )
+          +zinit-message "{pre}z-a-lbin: {ice}step 4{info2} - {msg2}${files[@]}{rst}"
+          ;;
+        5)
+          files=( $dir/bin/${id_as:t} )
+          +zinit-message "{pre}z-a-lbin: {ice}step 5{info2} - {msg2}${files[@]}{rst}"
+          ;;
+        6)
+          [[ -n $plugin ]] && files=( $dir/**/$plugin(Nnon.) )
+          +zinit-message "{pre}z-a-lbin: {ice}step 6{info2} - {msg2}${files[@]}{rst}"
+          ;;
+        7)
+          [[ -n $url ]] && files=( $dir/**/${url:t}(Nnon.) )
+          +zinit-message "{pre}z-a-lbin: {ice}step 7{info2} - {msg2}${files[@]}{rst}"
+          ;;
+        8)
+          files=( $dir/**/*(*Nnon.:t) )
+          +zinit-message "{pre}z-a-lbin: {ice}step 8{info2} - {msg2}${files[@]}{rst}"
+          ;;
+        9) +zinit-message "{pre}z-a-lbin: {error}The automatic-empty {ice}lbin{error} ice didn't find any executable files{rst}"
+          ;;
+        esac
+      done
+      [[ $i -gt 8 ]] && break
+      lbin=$files[1]
+    } else {
+      lbin=${lbin#!}
+      [[ -z $lbin ]] && continue
+    }
+
+    # parse lbin parameters (e.g., lbin'foo -> bar')
+    srcdst=( ${(@s.->.)lbin} )
+    +zinit-message "{pre}z-a-lbin:{info} split on -> results -- {msg2}${srcdst[@]}{rst}"
+
+    # trim whitespace
+    srcdst=( "${srcdst[@]//((#s)[[:space:]]##|[[:space:]]##(#e))/}" )
+    +zinit-message "{pre}z-a-lbin:{info} trim whitespace -- {msg2}${srcdst[@]}{rst}"
+
+    # Substitute the standard keywords and param''-s
+    @zinit-substitute 'srcdst[1]' 'srcdst[2]'
+
+    local fname
+    local -a fnames;
+    eval "fnames=( ${srcdst[1]}(Nnon.) )"
+
+    if (( !${#fnames} )) {
+      +zinit-message "{pre}z-a-lbin: {error}The {ice}lbin{error} ice (\`{glob}$lbin{error}')didn't match any files{rst}"
+      continue
+    }
+
+      for fname ( $fnames ) {
+        srcdst[1]="$fname"
+
+        local target_binary="${${(M)srcdst[1]:#/*}:-$dir/${srcdst[1]}}"
+        local fnam="${srcdst[2]:-${srcdst[1]:t}}"
+        local file="$ZPFX/bin/$fnam"
+
+        +zinit-message "{pre}z-a-lbin:{ice} \
+          lbin{info}paramaters: {msg2} \
+          target_binary = {obj2}$target_binary {msg2} \
+          fnam = {obj2}$fnam {msg2} \
+          file = {obj2}$file {msg2}"
+
+        command chmod +x "$target_binary"
+        command ln -f "$sym" "$target_binary" "$file"
+
+        if [[ -x $file ]]; then
+          (( !OPTS[opt_-q,--quiet] )) && \
+          if [[ -x $target_binary ]]; then
+            if [[ $hook == atclone-<-> || $ZINIT[annex-multi-flag:pull-active] -ge  2 ]] {
+              +zinit-message "{pre}z-a-lbin: {msg} \
+              ${${${hook:#*atclone-<->}:+Re-c}:-C}reated the {obj}$fnam{data2} ${${${sym#-P}:+soft}:-hard} \
+              {msg} link and set +x on the {obj} ${target_binary:t}{msg} binary{rst}"
             }
-
-            # parse lbin parameters (e.g., lbin'foo -> bar')
-            srcdst=( ${(@s.->.)lbin} )
-            +zinit-message "{pre}linkbin:{info} split on -> results -- {msg2}${srcdst[@]}{rst}"
-
-            # trim whitespace
-            srcdst=( "${srcdst[@]//((#s)[[:space:]]##|[[:space:]]##(#e))/}" )
-            +zinit-message "{pre}linkbin:{info} trim whitespace -- {msg2}${srcdst[@]}{rst}"
-
-            # Substitute the standard keywords and param''-s
-            @zinit-substitute 'srcdst[1]' 'srcdst[2]'
-
-            local -a fnames
-            local fname
-            eval "fnames=( ${srcdst[1]}(Nnon.) )"
-
-            if (( !${#fnames} )) {
-                +zinit-message "{pre}linkbin annex: {error}The {ice}lbin{error} ice (\`{glob}$lbin{error}')didn't match any files{rst}"
-                continue
-            }
-
-            for fname ( $fnames ) {
-                srcdst[1]="$fname"
-
-                local target_binary="${${(M)srcdst[1]:#/*}:-$dir/${srcdst[1]}}"
-                local fnam="${srcdst[2]:-${srcdst[1]:t}}"
-                local file="$ZPFX/bin/$fnam"
-
-                +zinit-message "{pre}linkbin annex:{ice} \
-                  lbin{info}paramaters: {msg2} \
-                  target_binary = {obj2}$target_binary {msg2} \
-                  fnam = {obj2}$fnam {msg2} \
-                  file = {obj2}$file {msg2}"
-
-                command chmod +x "$target_binary"
-                command ln -f "$sym" "$target_binary" "$file"
-
-                if [[ -x $file ]]; then
-                    (( !OPTS[opt_-q,--quiet] )) && \
-                        if [[ -x $target_binary ]]; then
-                            if [[ $hook == atclone-<-> || $ZINIT[annex-multi-flag:pull-active] -ge  2 ]] {
-                                +zinit-message "{pre}linkbin annex: {msg}${${${hook:#*atclone-<->}:+Re-c}:-C}reated the {obj}$fnam{data2} ${${${sym#-P}:+soft}:-hard}{msg} link and set +x on the {obj}${target_binary:t}{msg} binary{rst}"
-                            }
-                        else
-                            +zinit-message "{pre}linkbin annex: {error}${${${hook:#*atclone-<->}:+Re-c}:-C}reated the {obj}$fnam{data2} ${${${sym#-P}:+soft}:-hard}{error} link however the {obj}${target_binary:t}{error} binary does not exist or failed to set +x on it{rst}"
-                        fi
-                else
-                    +zinit-message "{pre}linkbin annex: {error}Something went wrong creating the {obj}$fnam{error} link{rst}"
-                fi
-            }
-        }
-    )
+          else
+            +zinit-message "{pre}z-a-lbin: {error}
+            ${${${hook:#*atclone-<->}:+Re-c}:-C}reated the {obj}$fnam{data2}
+            ${${${sym#-P}:+soft}:-hard}{error} link however the {obj}${target_binary:t}{error}
+            binary does not exist or failed to set +x on it{rst}"
+          fi
+        else
+          +zinit-message "{pre}z-a-lbin: {error}Something went wrong creating the {obj}$fnam{error} link{rst}"
+        fi
+      }
+    }
+  )
 }
 
 # vim:ft=zsh:sw=2:sts=2:et
