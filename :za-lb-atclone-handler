@@ -58,19 +58,19 @@ if (( ${+ICE[lbin]} )) {
           ;;
         2) # search for binary with plugin name (e.g., repository name)
           [[ -n $plugin ]] && files=( $dir/$plugin(Nnon.) )
-          +zinit-message "{pre}z-a-lbin: {ice}step 2{info2} -- {msg2} ${files[@]}{rst}"
+          +zinit-message "{pre}z-a-lbin: {ice}step 2{info2} - {msg2} ${files[@]}{rst}"
           ;;
-        3)
+        3) # (Nnon.) 
           [[ -n $url ]] && files=( $dir/${url:t}(Nnon.) )
           +zinit-message "{pre}z-a-lbin: {ice}step 3{info2} - {msg2}${files[@]}{rst}"
           ;;
         4)
-          files=( $dir/*(*Nnon.:t) )
-          +zinit-message "{pre}z-a-lbin: {ice}step 4{info2} - {msg2}${files[@]}{rst}"
-          ;;
-        5)
           files=( $dir/bin/${id_as:t} )
           +zinit-message "{pre}z-a-lbin: {ice}step 5{info2} - {msg2}${files[@]}{rst}"
+          ;;
+        5)
+          files=( $dir/*(*Nnon.:t) )
+          +zinit-message "{pre}z-a-lbin: {ice}step 4{info2} - {msg2}${files[@]}{rst}"
           ;;
         6)
           [[ -n $plugin ]] && files=( $dir/**/$plugin(Nnon.) )
