@@ -59,24 +59,31 @@ if (( ${+ICE[lbin]} )) {
                         2)
                           # search for binary with plugin name (e.g., repository name)
                             [[ -n $plugin ]] && files=( $dir/$plugin(Nnon.) )
+                            +zinit-message "{pre}z-a-lbin: {ice}step 2{info2} -- {msg2} ${files[@]}{rst}"
                         ;;
                         3)
                             [[ -n $url ]] && files=( $dir/${url:t}(Nnon.) )
+                            +zinit-message "{pre}z-a-lbin: {ice}step 3{info2} -- {msg2} ${files[@]}{rst}"
                         ;;
                         4)
                             files=( $dir/*(*Nnon.:t) )
+                            +zinit-message "{pre}z-a-lbin: {ice}step 4{info2} -- {msg2} ${files[@]}{rst}"
                         ;;
                         5)
                             files=( $dir/bin/${id_as:t} )
+                            +zinit-message "{pre}z-a-lbin: {ice}step 5{info2} -- {msg2} ${files[@]}{rst}"
                         ;;
                         6)
                             [[ -n $plugin ]] && files=( $dir/bin/$plugin(Nnon.) )
+                            +zinit-message "{pre}z-a-lbin: {ice}step 6{info2} -- {msg2} ${files[@]}{rst}"
                         ;;
                         7)
                             [[ -n $url ]] && files=( $dir/**/${url:t}(Nnon.) )
+                            +zinit-message "{pre}z-a-lbin: {ice}step 7{info2} -- {msg2} ${files[@]}{rst}"
                         ;;
                         8)
                             files=( $dir/**/*(*Nnon.:t) )
+                            +zinit-message "{pre}z-a-lbin: {ice}step 8{info2} -- {msg2} ${files[@]}{rst}"
                         ;;
                         9)
                             +zinit-message "{pre}linkbin annex: {error}The automatic-empty {ice}lbin{error} ice didn't find any executable files{rst}"
