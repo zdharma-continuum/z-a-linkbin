@@ -67,7 +67,7 @@ if (( ${+ICE[lbin]} )) {
                             files=( $dir/*(*Nnon.:t) )
                         ;;
                         5)
-                            files=( $dir/**/${id_as:t} )
+                            files=( $dir/bin/${id_as:t} )
                         ;;
                         6)
                             [[ -n $plugin ]] && files=( $dir/**/$plugin(Nnon.) )
