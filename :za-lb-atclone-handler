@@ -7,7 +7,7 @@ setopt extendedglob warncreateglobal typesetsilent noshortloops nullglob
 
 if [[ "$1" = plugin ]] {
     local type="$1" user="$2" plugin="$3" id_as="$4" dir="${5#%}" hook="$6"
-    +zinit-message "{pre}lbin:{info} \
+    +zinit-message -n "{pre}lbin:{info} \
       type   ={obj2}$type  {msg2} \
       user   ={obj2}$user  {msg2} \
       plugin ={obj2}$plugin{msg2} \
@@ -15,12 +15,12 @@ if [[ "$1" = plugin ]] {
       dir    ={obj2}$dir   {rst}"
 } else {
     local type="$1" url="$2" id_as="$3" dir="${4#%}" hook="$5"
-    +zinit-message "{pre}lbin:{info} \
-      type  ={obj2}$type {msg2} \
-      url   ={obj2}$url  {msg2} \
-      id_as ={obj2}$id_as{msg2} \
-      dir   ={obj2}$dir  {msg2} \
-      hook  ={obj2}$hook {rst}"
+    +zinit-message -n "{pre}lbin:{info} \
+      type  = {obj2}$type {msg2} \
+      url   = {obj2}$url  {msg2} \
+      id_as = {obj2}$id_as{msg2} \
+      dir   = {obj2}$dir  {msg2} \
+      hook  = {obj2}$hook {rst}"
 }
 
 #
@@ -39,7 +39,7 @@ if (( ${+ICE[lbin]} )) {
     local lbin sym="-P"
 
     (
-        # CD for the globbing through eval
+        # go to plugin dir for globbing through eval
         builtin cd -q "$dir" || return
 
         for lbin ( $lbins "" ) {
@@ -52,9 +52,12 @@ if (( ${+ICE[lbin]} )) {
                     ((i++))
                     case $i in
                         1)
+                            # search for binary with id-as value
                             files=( $dir/${id_as:t}(Nnon.) )
+                            +zinit-message "{pre}linkbin annex: {error}The automatic-empty {ice}lbin{error} ice didn't find any executable files{rst}"
                         ;;
                         2)
+                          # search for binary with plugin name (e.g., repository name)
                             [[ -n $plugin ]] && files=( $dir/$plugin(Nnon.) )
                         ;;
                         3)
@@ -87,9 +90,11 @@ if (( ${+ICE[lbin]} )) {
                 [[ -z $lbin ]] && continue
             }
 
+            # parse lbin parameters (e.g., lbin'foo -> bar')
             srcdst=( ${(@s.->.)lbin} )
             +zinit-message "{pre}linkbin:{info} split on -> results -- {msg2}${srcdst[@]}{rst}"
 
+            # trim whitespace
             srcdst=( "${srcdst[@]//((#s)[[:space:]]##|[[:space:]]##(#e))/}" )
             +zinit-message "{pre}linkbin:{info} trim whitespace -- {msg2}${srcdst[@]}{rst}"
 
