@@ -69,9 +69,9 @@ if (( ${+ICE[lbin]} )) {
         lbin=${lbin#!}
         [[ -z $lbin ]] && continue
       }
-
+ 
       # +zinit-message "{pre}linkbin: {info} srcdst value #1: {glob}$srcdst[@]{info}{rst}"
-      # srcdst=( ${(@s.->.)lbin} )
+      srcdst=( ${(@s.->.)lbin} )
       # +zinit-message "{pre}linkbin: {info} srcdst value #2: {glob}$srcdst[@]{info}{rst}"
       srcdst=( "${srcdst[@]//((#s)[[:space:]]##|[[:space:]]##(#e))/}" )
       # srcdst=( ${${srcdst[@]## ##}%% ##} )
