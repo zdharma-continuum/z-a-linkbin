@@ -2,7 +2,7 @@
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 **Table of Contents**  *generated with [DocToc](https://github.com/thlorenz/doctoc)*
 
-- [z-a-linkbin](#z-a-linkbin)
+- [zinit-annex-binary-symlink](#zinit-annex-binary-symlink)
   - [Introduction](#introduction)
   - [Installation](#installation)
   - [How it works](#how-it-works)
@@ -11,7 +11,7 @@
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
-# z-a-linkbin
+# zinit-annex-binary-symlink
 
 ## Introduction
 
@@ -26,7 +26,7 @@ allows to:
 Simply load like a regular plugin, i.e.:
 
 ```zsh
-zinit light NICHOLAS85/z-a-linkbin
+zinit light zdharma-continuum/zinit-annex-binary-symlink
 ```
 
 After executing this command you can then use the new ice-mods provided by
@@ -34,7 +34,7 @@ the annex.
 
 ## How it works
 
-Exposing a binary program without modifying `$PATH` – `z-a-linkbin` will
+Exposing a binary program without modifying `$PATH` – `zinit-annex-binary-symlink` will
 automatically create a hard or soft link to the binary in `$ZPFX/bin`
 exposing the program to the command line as if it were being placed in `$PATH`.
 
