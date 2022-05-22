@@ -38,38 +38,49 @@ if (( ${+ICE[lbin]} )) {
       if [[ -z $lbin && ${#lbins} -eq 0 ]] || [[ $lbin = "!" && ${#lbins} -eq 1 ]] {
         local -a files
         integer i=0
-        while [[ ! -f $files[1] && $i -lt 9 ]]; do
+        while [[ ! -f $files[1] && $i -lt 10 ]]; do
           ((i++))
           case $i in
             1) files=( $dir/${id_as:t}(Nnon.) )
+              +zinit-message "{pre}lbin{rst}:{info} (1) dir=$dir id_as:t=${id_as:t} {obj}${(pj:,:)${(@)files[1,5]:t}} {rst}"
               ;;
-            2) [[ -n $plugin ]] && files=( $dir/$plugin(Nnon.) ) 
+            2) [[ -n $plugin ]] && files=( $dir/$plugin(Nnon.) )
+              +zinit-message "{pre}lbin{rst}:{info} (2) dir=$dir plugin=$plugin {obj}${(pj:,:)${(@)files[1,5]:t}} {rst}"
               ;;
-            3) [[ -n $url ]] && files=( $dir/${url:t}(Nnon.) ) 
+            3) [[ -n $url ]] && files=( $dir/${url:t}(Nnon.) )
+              +zinit-message "{pre}lbin{rst}:{info} (3) dir=$dir url=$url {obj}${(pj:,:)${(@)files[1,5]:t}} {rst}"
               ;;
-            4) files=( $dir/*(*Nnon.:t) ) 
+            4) [[ $(file --mime-type "${dir}/*(N^/[1])" | awk '{print $2}') =~ '*binary*' ]] && [[ ${dir}/*(N^/[1]) =~ "*${id_as:t}*" ]]
+              mv "${dir}"/*(N^/[1]) "$dir/${id_as:t}"
+              files=("$dir/$plugin")
+              +zinit-message "{pre}lbin{rst}:{info} (4) dir=$dir id_as=${id_as:t} {obj}${(pj:,:)${(@)files[1,5]:t}} {rst}"
               ;;
-            5) files=( $dir/**/${id_as:t} ) 
+            5) files=( $dir/*(*Nnon.:t) )
+              +zinit-message "{pre}lbin{rst}:{info} (5) dir=$dir {obj}${(pj:,:)${(@)files[1,5]:t}} {rst}"
               ;;
-            6) [[ -n $plugin ]] && files=( $dir/**/$plugin(Nnon.) )
+            6) files=( $dir/**/${id_as:t} )
+              +zinit-message "{pre}lbin{rst}:{info} (6) dir=$dir id_as=${id_as:t} {obj}${(pj:,:)${(@)files[1,5]:t}} {rst}"
               ;;
-            7) [[ -n $url ]] && files=( $dir/**/${url:t}(Nnon.) ) 
+            7) [[ -n $plugin ]] && files=( $dir/**/$plugin(Nnon.) )
+              +zinit-message "{pre}lbin{rst}:{info} (7) dir=$dir plugin=$plugin {obj}${(pj:,:)${(@)files[1,5]:t}} {rst}"
               ;;
-            8) files=( $dir/**/*(*Nnon.:t) ) 
+            8) [[ -n $url ]] && files=( $dir/**/${url:t}(Nnon.) )
+              +zinit-message "{pre}lbin{rst}:{info} (8) dir=$dir url=$url {obj}${(pj:,:)${(@)files[1,5]:t}} {rst}"
               ;;
-            9) +zinit-message \
-                "{pre}linkbin annex: {error}The automatic-empty" \
-                "{ice}lbin{error} ice didn't find any executable files{rst}" 
+            9) files=( $dir/**/*(*Nnon.:t) )
+              +zinit-message "{pre}lbin{rst}:{info} (9) dir=$dir {obj}${(pj:,:)${(@)files[1,5]:t}} {rst}"
+              ;;
+            10) +zinit-message "{pre}lbin{rst}:{error} The automatic-empty {ice}lbin{error} ice didn't find any executable files{rst}"
               ;;
           esac
         done
-        [[ $i -gt 8 ]] && break
+        [[ $i -gt 9 ]] && break
         lbin=$files[1]
       } else {
         lbin=${lbin#!}
         [[ -z $lbin ]] && continue
       }
- 
+
       # +zinit-message "{pre}linkbin: {info} srcdst value #1: {glob}$srcdst[@]{info}{rst}"
       srcdst=( ${(@s.->.)lbin} )
       # +zinit-message "{pre}linkbin: {info} srcdst value #2: {glob}$srcdst[@]{info}{rst}"
