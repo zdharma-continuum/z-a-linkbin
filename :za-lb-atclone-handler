@@ -1,15 +1,18 @@
+#!/usr/bin/env zsh
+# -*- mode: sh; sh-indentation: 2; indent-tabs-mode: nil; sh-basic-offset: 2; -*-
+#
 # Original work Copyright (c) 2019-2020 Sebastian Gniazdowski
 # Modified work Copyright (c) 2020-2021 Nicholas Serrano
-# License MIT
+# Modified work Copyright (c) 2022 zdharma-continuum and contributors
 
 emulate -RL zsh
 setopt extendedglob warncreateglobal typesetsilent noshortloops nullglob
 
-if [[ "$1" = plugin ]] {
+if [[ "$1" = plugin ]]; then
   local type="$1" user="$2" plugin="$3" id_as="$4" dir="${5#%}" hook="$6"
-} else {
+else
   local type="$1" url="$2" id_as="$3" dir="${4#%}" hook="$5"
-}
+fi
 
 #
 # lbin'' ice – creation of links
@@ -17,7 +20,7 @@ if [[ "$1" = plugin ]] {
 
 if (( ${+ICE[sbin]} )); then
   (( !OPTS[opt_-q,--quiet] )) && \
-  +zinit-message "{pre}linkbin annex: {ice}sbin{warn} ice detected, not doing anything...{rst}"
+    +zinit-message "{pre}linkbin annex: {ice}sbin{warn} ice detected, not doing anything...{rst}"
   return;
 fi
 
@@ -32,10 +35,9 @@ if (( ${+ICE[lbin]} )) {
     builtin cd -q "$dir" || return
 
     for lbin ( $lbins "" ) {
-      # if ! present, make a soft symlink
       [[ ${lbin[1]} = "!" ]] && sym="-s"
 
-      if [[ -z $lbin && ${#lbins} -eq 0 ]] || [[ $lbin = "!" && ${#lbins} -eq 1 ]] {
+      if [[ -z $lbin && ${#lbins} -eq 0 ]] || [[ $lbin = "!" && ${#lbins} -eq 1 ]]; then
         local -a files
         integer i=0
         while [[ ! -f $files[1] && $i -lt 9 ]]; do
@@ -43,33 +45,31 @@ if (( ${+ICE[lbin]} )) {
           case $i in
             1) files=( $dir/${id_as:t}(Nnon.) )
               ;;
-            2) [[ -n $plugin ]] && files=( $dir/$plugin(Nnon.) ) 
+            2) [[ -n $plugin ]] && files=( $dir/$plugin(Nnon.) )
               ;;
-            3) [[ -n $url ]] && files=( $dir/${url:t}(Nnon.) ) 
+            3) [[ -n $url ]] && files=( $dir/${url:t}(Nnon.) )
               ;;
-            4) files=( $dir/*(*Nnon.:t) ) 
+            4) files=( $dir/*(*Nnon.:t) )
               ;;
-            5) files=( $dir/**/${id_as:t} ) 
+            5) files=( $dir/**/${id_as:t} )
               ;;
             6) [[ -n $plugin ]] && files=( $dir/**/$plugin(Nnon.) )
               ;;
-            7) [[ -n $url ]] && files=( $dir/**/${url:t}(Nnon.) ) 
+            7) [[ -n $url ]] && files=( $dir/**/${url:t}(Nnon.) )
               ;;
-            8) files=( $dir/**/*(*Nnon.:t) ) 
+            8) files=( $dir/**/*(*Nnon.:t) )
               ;;
-            9) +zinit-message \
-                "{pre}linkbin annex: {error}The automatic-empty" \
-                "{ice}lbin{error} ice didn't find any executable files{rst}" 
+            9) +zinit-message "{pre}linkbin annex: {error}The automatic-empty {ice}lbin{error} ice didn't find any executable files{rst}"
               ;;
           esac
         done
         [[ $i -gt 8 ]] && break
         lbin=$files[1]
-      } else {
+      else
         lbin=${lbin#!}
         [[ -z $lbin ]] && continue
-      }
- 
+      fi
+
       # +zinit-message "{pre}linkbin: {info} srcdst value #1: {glob}$srcdst[@]{info}{rst}"
       srcdst=( ${(@s.->.)lbin} )
       # +zinit-message "{pre}linkbin: {info} srcdst value #2: {glob}$srcdst[@]{info}{rst}"
@@ -84,10 +84,10 @@ if (( ${+ICE[lbin]} )) {
       local fname
       eval "fnames=( ${srcdst[1]}(Nnon.) )"
 
-      if (( !${#fnames} )) {
+      if (( !${#fnames} )); then
         +zinit-message "{pre}linkbin annex: {error}The {ice}lbin{error} ice (\`{glob}$lbin{error}')didn't match any files{rst}"
         continue
-      }
+      fi
 
       for fname ( $fnames ) {
         srcdst[1]="$fname"
@@ -114,5 +114,3 @@ if (( ${+ICE[lbin]} )) {
     }
   )
 }
-
-# vim:ft=zsh:sw=2:sts=2:et
