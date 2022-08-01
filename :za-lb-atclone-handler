@@ -6,7 +6,7 @@
 # Modified work Copyright (c) 2022 zdharma-continuum and contributors
 
 emulate -RL zsh
-setopt extendedglob warncreateglobal typesetsilent noshortloops nullglob
+setopt extendedglob noshortloops nullglob typesetsilent warncreateglobal
 
 if [[ "$1" = plugin ]]; then
   local type="$1" user="$2" plugin="$3" id_as="$4" dir="${5#%}" hook="$6"
