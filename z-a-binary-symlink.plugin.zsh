@@ -1,5 +1,4 @@
 #!/usr/bin/env zsh
-# -*- mode: sh; sh-indentation: 2; indent-tabs-mode: nil; sh-basic-offset: 2; -*-
 #
 # Original work Copyright (c) 2019-2020 Sebastian Gniazdowski
 # Modified work Copyright (c) 2020-2021 Nicholas Serrano
@@ -13,23 +12,27 @@
 
 [[ -d $ZPFX/bin ]] || command mkdir -p "$ZPFX/bin"
 
-autoload :za-lb-atclone-handler :za-lb-atdelete-handler
+autoload +Xz -U \
+  :za-lb::atclone-handler \
+  :za-lb::atdelete-handler
 
 # An empty stub to fill the help handler fields
-:za-lb-null-handler() { :; }
+:za-lb::null-handler() { :; }
 
 @zinit-register-annex "z-a-linkbin" \
   hook:atclone-50 \
-  :za-lb-atclone-handler \
-  :za-lb-null-handler \
+  :za-lb::atclone-handler \
+  :za-lb::null-handler \
   "lbin|lbin''" # also register new ices
 
 @zinit-register-annex "z-a-linkbin" \
   hook:\%atpull-50 \
-  :za-lb-atclone-handler \
-  :za-lb-null-handler
+  :za-lb::atclone-handler \
+  :za-lb::null-handler
 
 @zinit-register-annex "z-a-linkbin" \
   hook:atdelete-50 \
-  :za-lb-atdelete-handler \
-  :za-lb-null-handler
+  :za-lb::atdelete-handler \
+  :za-lb::null-handler
+
+# vim: set expandtab filetype=zsh shiftwidth=2 softtabstop=2 tabstop=2:

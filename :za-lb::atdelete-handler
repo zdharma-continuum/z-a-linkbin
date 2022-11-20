@@ -1,5 +1,4 @@
 #!/usr/bin/env zsh
-# -*- mode: sh; sh-indentation: 2; indent-tabs-mode: nil; sh-basic-offset: 2; -*-
 #
 # Original work Copyright (c) 2019-2020 Sebastian Gniazdowski
 # Modified work Copyright (c) 2020-2021 Nicholas Serrano
@@ -114,4 +113,4 @@ if (( ${+ICE[lbin]} )) {
   )
 }
 
-# vim:ft=zsh:sw=4:sts=4:et
+# vim: set expandtab filetype=zsh shiftwidth=2 softtabstop=2 tabstop=2:
