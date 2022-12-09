@@ -20,7 +20,7 @@ fi
 
 if (( ${+ICE[sbin]} )); then
   (( !OPTS[opt_-q,--quiet] )) && \
-    +zinit-message "{info}[{pre}linkbin annex{info}] {ice}sbin{msg} ice detected, not doing anything...{rst}"
+    +zi::message "{info}[{pre}linkbin annex{info}] {ice}sbin{msg} ice detected, not doing anything...{rst}"
   return;
 fi
 
@@ -59,7 +59,7 @@ if (( ${+ICE[lbin]} )) {
               ;;
             8) files=( $dir/**/*(*Nnon.:t) )
               ;;
-            9) +zinit-message "{info}[{pre}linkbin annex{info}] {error}The automatic-empty {ice}lbin{error} ice didn't find any executable files{rst}"
+            9) +zi::message "{info}[{pre}linkbin annex{info}] {error}The automatic-empty {ice}lbin{error} ice didn't find any executable files{rst}"
               ;;
           esac
         done
@@ -70,22 +70,22 @@ if (( ${+ICE[lbin]} )) {
         [[ -z $lbin ]] && continue
       fi
 
-      # +zinit-message "{pre}linkbin: {info} srcdst value #1: {glob}$srcdst[@]{info}{rst}"
+      # +zi::message "{pre}linkbin: {info} srcdst value #1: {glob}$srcdst[@]{info}{rst}"
       srcdst=( ${(@s.->.)lbin} )
-      # +zinit-message "{pre}linkbin: {info} srcdst value #2: {glob}$srcdst[@]{info}{rst}"
+      # +zi::message "{pre}linkbin: {info} srcdst value #2: {glob}$srcdst[@]{info}{rst}"
       srcdst=( "${srcdst[@]//((#s)[[:space:]]##|[[:space:]]##(#e))/}" )
       # srcdst=( ${${srcdst[@]## ##}%% ##} )
       # srcdst=(${(MS)srcdst[@]##[[:graph:]]*[[:graph:]]})
-      # +zinit-message "{info}[{pre}linkbin annex{info}] {msg2}srcdst value #3: {glob}$srcdst[@]{info}{rst}"
+      # +zi::message "{info}[{pre}linkbin annex{info}] {msg2}srcdst value #3: {glob}$srcdst[@]{info}{rst}"
 
-      @zinit-substitute "srcdst[1]" "srcdst[2]"
+      @zi::substitute "srcdst[1]" "srcdst[2]"
 
       local -a fnames
       local fname
       eval "fnames=( ${srcdst[1]}(Nnon.) )"
 
       if (( !${#fnames} )); then
-        +zinit-message "{info}[{pre}linkbin annex{info}] {error}The {ice}lbin{error} ice (\`{glob}$lbin{error}')didn't match any files{rst}"
+        +zi::message "{info}[{pre}linkbin annex{info}] {error}The {ice}lbin{error} ice (\`{glob}$lbin{error}')didn't match any files{rst}"
         continue
       fi
 
@@ -102,13 +102,13 @@ if (( ${+ICE[lbin]} )) {
         if [[ -x $file ]]; then
           if (( !OPTS[opt_-q,--quiet] )) && [[ -x $target_binary ]]; then
             if [[ $hook == atclone-<-> ]] || [[ $ZINIT[annex-multi-flag:pull-active] -ge  2 ]]; then
-              +zinit-message "{info}[{pre}linkbin annex{info}] {rst}${${${hook:#*atclone-<->}:+Re-c}:-C}reated the {obj}$fnam{data2} ${${${sym#-P}:+soft}:-hard}{msg} link and set +x on the {obj}${target_binary:t}{msg} binary{rst}"
+              +zi::message "{info}[{pre}linkbin annex{info}] {rst}${${${hook:#*atclone-<->}:+Re-c}:-C}reated the {obj}$fnam{data2} ${${${sym#-P}:+soft}:-hard}{msg} link and set +x on the {obj}${target_binary:t}{msg} binary{rst}"
             else
-              +zinit-message "{info}[{pre}linkbin annex{info}] {error}${${${hook:#*atclone-<->}:+Re-c}:-C}reated the {obj}$fnam{data2} ${${${sym#-P}:+soft}:-hard}{error} link however the {obj}${target_binary:t}{error} binary does not exist or failed to set +x on it{rst}"
+              +zi::message "{info}[{pre}linkbin annex{info}] {error}${${${hook:#*atclone-<->}:+Re-c}:-C}reated the {obj}$fnam{data2} ${${${sym#-P}:+soft}:-hard}{error} link however the {obj}${target_binary:t}{error} binary does not exist or failed to set +x on it{rst}"
             fi
           fi
         else
-          +zinit-message "{info}[{pre}linkbin annex{info}] {error}Something went wrong creating the {obj}$fnam{error} link{rst}"
+          +zi::message "{info}[{pre}linkbin annex{info}] {error}Something went wrong creating the {obj}$fnam{error} link{rst}"
         fi
       }
     }
