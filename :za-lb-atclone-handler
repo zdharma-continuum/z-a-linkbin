@@ -97,15 +97,15 @@ if (( ${+ICE[lbin]} )) {
         if [[ -x $file ]]; then
           if (( !OPTS[opt_-q,--quiet] )) && [[ -x $target_binary ]]; then
             if  [[ $hook == atclone-<-> ]] || [[ $ZINIT[annex-multi-flag:pull-active] -ge  2 ]]; then
-              +zinit-message "{pre}==>{rst} {b}lbin{rst}: ${${${hook:#*atclone-<->}:+Re-c}:-C}reated {obj}$fnam{rst} ${${${sym#-P}:+soft}:-hard} link & set +x on the {file}${target_binary:t}{rst} binary"
+              +zinit-message "{pre}==>{rst} {b}lbin{rst}: ${${${hook:#*atclone-<->}:+Re-c}:-C}reated {file}$fnam{rst} ${${${sym#-P}:+soft}:-hard} link & set +x on the {file}${target_binary:t}{rst} binary"
             elif (( !OPTS[opt_-u,--urge] )) && [[ $hook == atclone-<-> || $ZINIT[annex-multi-flag:pull-active] -eq 1 ]]; then
-              +zinit-message "{error}Error:{rst} {b}lbin{rst}: ${${${hook:#*atclone-<->}:+Re-c}:-C}reated the {obj}$fnam{data2} ${${${sym#-P}:+soft}:-hard}{error} link, but {file}${target_binary:t}{rst} binary does not exist or failed to set +x on it"
+              +zinit-message "{error}Error:{rst} {b}lbin{rst}: ${${${hook:#*atclone-<->}:+Re-c}:-C}reated the {file}$fnam{rst} ${${${sym#-P}:+soft}:-hard} link, but {file}${target_binary:t}{rst} binary does not exist or failed to set +x on it"
             else
               continue
             fi
           fi
         else
-          +zinit-message "{error}Error:{rst} {b}lbin{rst}: failed to create {obj}$fnam{rst}"
+          +zinit-message "{error}Error:{rst} {b}lbin{rst}: failed to create {file}$fnam{rst}"
         fi
       }
     }
