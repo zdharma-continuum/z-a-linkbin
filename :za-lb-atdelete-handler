@@ -73,7 +73,7 @@ if (( ${+ICE[lbin]} )); then
                 done
                 [[ $i -gt 8 ]] && break
                 lbin=$files[1]
-                } else {
+            else
                 lbin=${lbin#!}
                 [[ -z $lbin ]] && continue
             fi
