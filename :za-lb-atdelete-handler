@@ -8,34 +8,30 @@
 emulate -RL zsh
 setopt extendedglob warncreateglobal typesetsilent noshortloops nullglob
 
-if [[ "$1" = plugin ]] {
+if [[ "$1" = plugin ]]; then
     local type="$1" user="$2" plugin="$3" id_as="$4" dir="${5#%}" hook="$6"
-    } else {
+else
     local type="$1" url="$2" id_as="$3" dir="${4#%}" hook="$5"
-}
+fi
 
 #
 # lbin'' ice – creation of links
 #
 
 if (( ${+ICE[lbin]} )); then
-    (( ${+ICE[sbin]} )) && {
-        (( !OPTS[opt_-q,--quiet] )) && \
-            +zinit-message "{pre}==>{rst} {b}lbin{rst}: {ice}sbin{rst} detected, not doing anything"
-        return;
-    }
+    if (( ${+ICE[sbin]} )); then
+        (( !OPTS[opt_-q,--quiet] )) && +zinit-message "{pre}==>{rst} {b}lbin{rst}: {ice}sbin{rst} detected, not doing anything"
+        return
+    fi
     local -a lbins srcdst
     lbins=( ${(s.;.)ICE2[lbin]} )
 
     local lbin sym="-P"
 
     (
-        # CD for the globbing through eval
         builtin cd -q "$dir" || return
-
-        for lbin in ( $lbins "" ); do
+        for lbin in $lbins "" ; do
             [[ ${lbin[1]} = "!" ]] && sym="-s"
-
             if [[ -z $lbin && ${#lbins} -eq 0 ]] || [[ $lbin = "!" && ${#lbins} -eq 1 ]]; then
                 local -a files
                 integer i=0
@@ -77,10 +73,9 @@ if (( ${+ICE[lbin]} )); then
                 lbin=${lbin#!}
                 [[ -z $lbin ]] && continue
             fi
+
             srcdst=( ${(@s.->.)lbin} )
             srcdst=( ${srcdst[@]//((#s)[[:space:]]##|[[:space:]]##(#e))/} )
-
-            # Substitute the standard keywords and params
             @zinit-substitute 'srcdst[1]' 'srcdst[2]'
 
             local -a fnames
@@ -92,7 +87,7 @@ if (( ${+ICE[lbin]} )); then
                 continue
             fi
 
-            for fname in ( $fnames ); do
+            for fname in $fnames; do
                 srcdst[1]="$fname"
 
                 local fnam="${srcdst[2]:-${srcdst[1]:t}}"
@@ -101,8 +96,7 @@ if (( ${+ICE[lbin]} )); then
                 if [[ -f $file ]]; then
                     command rm "$file"
                     if ! [[ -f $file ]]; then
-                        (( !OPTS[opt_-q,--quiet] )) && \
-                            +zinit-message "{pre}==>{rst} {b}lbin{rst}: Removed {file}$fnam{rst} ${${${sym#-P}:+soft}:-hard} link"
+                        (( !OPTS[opt_-q,--quiet] )) && +zinit-message "{pre}==>{rst} {b}lbin{rst}: Removed {file}$fnam{rst} ${${${sym#-P}:+soft}:-hard} link"
                     else
                         +zinit-message "{error}Error:{rst} {b}lbin{rst}: Something went wrong deleting the {file}$fnam{rst} link"
                     fi
