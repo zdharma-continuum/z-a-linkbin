@@ -14,7 +14,7 @@ else
 fi
 if (( ${+ICE[lbin]} )); then
     (( ${+ICE[sbin]} )) && {
-        (( !OPTS[opt_-q,--quiet] )) && +zinit-message "{pre}linkbin annex: {ice}sbin{warn} ice detected, not doing anything...{rst}"
+        (( !OPTS[opt_-q,--quiet] )) && +zinit-message "{w} linkbin annex disabled due to {ice}sbin{rst} ice detected"
         return
     }
     local -a lbins srcdst

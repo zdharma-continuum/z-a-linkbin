@@ -14,7 +14,7 @@ else
     local type="$1" url="$2" id_as="$3" dir="${4#%}" hook="$5"
 fi
 if (( ${+ICE[sbin]} )); then
-    (( !OPTS[opt_-q,--quiet] )) && +zinit-message "{info}[{pre}linkbin annex{info}] {ice}sbin{msg} ice detected, not doing anything...{rst}"
+    (( !OPTS[opt_-q,--quiet] )) && +zinit-message "{w} linkbin annex disabled due to {ice}sbin{rst} ice detected"
     return
 fi
 if (( ${+ICE[lbin]} )); then
@@ -39,7 +39,7 @@ if (( ${+ICE[lbin]} )); then
                         (6) [[ -n $plugin ]] && files=($dir/**/$plugin(Nnon.))  ;;
                         (7) [[ -n $url ]] && files=($dir/**/${url:t}(Nnon.))  ;;
                         (8) files=($dir/**/*(*Nnon.:t))  ;;
-                        (9) +zinit-message "{info}[{pre}linkbin annex{info}] {error}The automatic-empty {ice}lbin{error} ice didn't find any executable files{rst}" ;;
+                        (9) +zinit-message "{w} linkbin annex ice did not find any executable files" ;;
                     esac
                 done
                 [[ $i -gt 8 ]] && break
@@ -55,7 +55,7 @@ if (( ${+ICE[lbin]} )); then
             local fname
             eval "fnames=( ${srcdst[1]}(Nnon.) )"
             if (( !${#fnames} )); then
-                +zinit-message "{e} {ice}lbin{error} ice {glob}$lbin{rst} did not match any files"
+                +zinit-message "{e} linkbin annex ice {glob}$lbin{rst} did not match any files"
                 continue
             fi
             for fname in $fnames; do
