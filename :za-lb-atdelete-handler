@@ -1,16 +1,18 @@
 #!/usr/bin/env zsh
-# -*- mode: sh; sh-indentation: 2; indent-tabs-mode: nil; sh-basic-offset: 2; -*-
+# -*- mode: sh; sh-indentation: 4; indent-tabs-mode: nil; sh-basic-offset: 4; -*-
 #
 # Original work Copyright (c) 2019-2020 Sebastian Gniazdowski
 # Modified work Copyright (c) 2020-2021 Nicholas Serrano
 # Modified work Copyright (c) 2022 zdharma-continuum and contributors
+#
 
 emulate -RL zsh
-setopt extendedglob warncreateglobal typesetsilent noshortloops nullglob
+setopt extendedglob noshortloops nullglob typesetsilent warncreateglobal
+
 if [[ "$1" = plugin ]]; then
-    local type="$1" user="$2" plugin="$3" id_as="$4" dir="${5#%}" hook="$6"
+    local dir="${5#%}" hook="$6" id_as="$4" plugin="$3" type="$1" user="$2"
 else
-    local type="$1" url="$2" id_as="$3" dir="${4#%}" hook="$5"
+    local dir="${4#%}" hook="$5" id_as="$3" type="$1" url="$2"
 fi
 if (( ${+ICE[lbin]} )); then
     (( ${+ICE[sbin]} )) && {
@@ -30,15 +32,33 @@ if (( ${+ICE[lbin]} )); then
                 while [[ ! -f $files[1] && $i -lt 9 ]]; do
                     ((i++))
                     case $i in
-                        (1) files=($dir/${id_as:t}(Nnon.))  ;;
-                        (2) [[ -n $plugin ]] && files=($dir/$plugin(Nnon.))  ;;
-                        (3) [[ -n $url ]] && files=($dir/${url:t}(Nnon.))  ;;
-                        (4) files=($dir/*(*Nnon.:t))  ;;
-                        (5) files=($dir/**/${id_as:t})  ;;
-                        (6) [[ -n $plugin ]] && files=($dir/**/$plugin(Nnon.))  ;;
-                        (7) [[ -n $url ]] && files=($dir/**/${url:t}(Nnon.))  ;;
-                        (8) files=($dir/**/*(*Nnon.:t))  ;;
-                        (9) +zinit-message "{w} linkbin annex ice did not find any executable files" ;;
+                        (1)
+                            files=($dir/${id_as:t}(Nnon.))
+                            ;;
+                        (2)
+                            [[ -n $plugin ]] && files=($dir/$plugin(Nnon.))
+                            ;;
+                        (3)
+                            [[ -n $url ]] && files=($dir/${url:t}(Nnon.))
+                            ;;
+                        (4)
+                            files=($dir/*(*Nnon.:t))
+                            ;;
+                        (5)
+                            files=($dir/**/${id_as:t})
+                            ;;
+                        (6)
+                            [[ -n $plugin ]] && files=($dir/**/$plugin(Nnon.))
+                            ;;
+                        (7)
+                            [[ -n $url ]] && files=($dir/**/${url:t}(Nnon.))
+                            ;;
+                        (8)
+                            files=($dir/**/*(*Nnon.:t))
+                            ;;
+                        (9)
+                            +zinit-message "{w} linkbin annex ice did not find any executable files"
+                            ;;
                     esac
                 done
                 [[ $i -gt 8 ]] && break
@@ -49,10 +69,13 @@ if (( ${+ICE[lbin]} )); then
             fi
             srcdst=(${(@s.->.)lbin})
             srcdst=("${srcdst[@]//((#s)[[:space:]]##|[[:space:]]##(#e))/}")
+            # `
             @zinit-substitute 'srcdst[1]' 'srcdst[2]'
             local -a fnames
             local fname
-            eval "fnames=( ${srcdst[1]}(Nnon.) )"
+            # eval "fnames=(${srcdst[1]}(Nnon.))"
+            builtin print -v fnames -Pr -- ${srcdst[1]}(Nnon.)
+            print -l -- "filenames ${#fnames}" $fnames
             if (( !${#fnames} )); then
                 +zinit-message "{e} linkbin annex ice {glob}$lbin{rst} did not match any files"
                 continue
@@ -62,7 +85,7 @@ if (( ${+ICE[lbin]} )); then
                 local fnam="${srcdst[2]:-${srcdst[1]:t}}"
                 local file="$ZPFX/bin/$fnam"
                 if [[ -f $file ]]; then
-                    command rm "$file"
+                    command rm -- "$file"
                     if ! [[ -f $file ]]; then
                         (( !OPTS[opt_-q,--quiet] )) && +zinit-message "{m} linkbin annex removed {file}$fnam{rst} ${${${sym#-P}:+soft}:-hard} link"
                     else
