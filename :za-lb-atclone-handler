@@ -20,17 +20,16 @@ fi
 
 if (( ${+ICE[sbin]} )); then
   (( !OPTS[opt_-q,--quiet] )) && \
-    +zinit-message "{info}[{pre}linkbin annex{info}] {ice}sbin{msg} ice detected, not doing anything...{rst}"
+    +zinit-message "{w} linkbin annex: {ice}sbin{msg} ice detected, not doing anything"
   return;
 fi
 
 if (( ${+ICE[lbin]} )) {
 
+  (
   local lbin sym="-P"
   local -a lbins srcdst
   lbins=( ${(s.;.)ICE[lbin]} )
-
-  (
     # CD for the globbing through eval
     builtin cd -q "$dir" || return
 
@@ -40,7 +39,7 @@ if (( ${+ICE[lbin]} )) {
       if [[ -z $lbin && ${#lbins} -eq 0 ]] || [[ $lbin = "!" && ${#lbins} -eq 1 ]]; then
         local -a files
         integer i=0
-        while [[ ! -f $files[1] && $i -lt 9 ]]; do
+        while [[ ! -f $files[1] && $i -lt 10 ]]; do
           ((i++))
           case $i in
             1) files=( $dir/${id_as:t}(Nnon.) )
@@ -49,21 +48,23 @@ if (( ${+ICE[lbin]} )) {
               ;;
             3) [[ -n $url ]] && files=( $dir/${url:t}(Nnon.) )
               ;;
-            4) files=( $dir/*(*Nnon.:t) )
+            4) files=( $dir/*/*(*Nnon.:t) )
               ;;
-            5) files=( $dir/**/${id_as:t} )
+            5) files=( $dir/**/*(*Nnon.:t) )
               ;;
-            6) [[ -n $plugin ]] && files=( $dir/**/$plugin(Nnon.) )
+            6) files=( $dir/**/(${id_as:t}|$plugin)(Nnon.) )
               ;;
-            7) [[ -n $url ]] && files=( $dir/**/${url:t}(Nnon.) )
+            7) [[ -n $plugin ]] && files=( $dir/**/$plugin(Nnon.) )
               ;;
-            8) files=( $dir/**/*(*Nnon.:t) )
+            8) [[ -n $url ]] && files=( $dir/**/${url:t}(Nnon.) )
               ;;
-            9) +zinit-message "{info}[{pre}linkbin annex{info}] {error}The automatic-empty {ice}lbin{error} ice didn't find any executable files{rst}"
+            9) files=( $dir/**/*(*Nnon.:t) )
+              ;;
+            10) +zinit-message "{e} linkbin annex: The automatic-empty {ice}lbin{rst} ice didn't find any executable files"
               ;;
           esac
         done
-        [[ $i -gt 8 ]] && break
+        [[ $i -gt 9 ]] && break
         lbin=$files[1]
       else
         lbin=${lbin#!}
@@ -74,18 +75,21 @@ if (( ${+ICE[lbin]} )) {
       srcdst=( ${(@s.->.)lbin} )
       # +zinit-message "{pre}linkbin: {info} srcdst value #2: {glob}$srcdst[@]{info}{rst}"
       srcdst=( "${srcdst[@]//((#s)[[:space:]]##|[[:space:]]##(#e))/}" )
-      # srcdst=( ${${srcdst[@]## ##}%% ##} )
-      # srcdst=(${(MS)srcdst[@]##[[:graph:]]*[[:graph:]]})
-      # +zinit-message "{info}[{pre}linkbin annex{info}] {msg2}srcdst value #3: {glob}$srcdst[@]{info}{rst}"
+      #`
 
       @zinit-substitute "srcdst[1]" "srcdst[2]"
 
       local -a fnames
       local fname
-      eval "fnames=( ${srcdst[1]}(Nnon.) )"
+      if [[ $srcdst[1] != /* ]]; then
+          eval "fnames=(**/${srcdst[1]}(Nnon-.))"
+      else
+          eval "fnames=(${srcdst[1]}(Nnon-.))"
+      fi
+      # eval "fnames=(${srcdst[1]}(Nnon.))"
 
       if (( !${#fnames} )); then
-        +zinit-message "{info}[{pre}linkbin annex{info}] {error}The {ice}lbin{error} ice (\`{glob}$lbin{error}')didn't match any files{rst}"
+        +zinit-message "{e} linkbin annex: The {ice}lbin{error} ice ({glob}$lbin{rst}) did not match any files"
         continue
       fi
 
@@ -102,15 +106,15 @@ if (( ${+ICE[lbin]} )) {
         if [[ -x $file ]]; then
           if (( !OPTS[opt_-q,--quiet] )) && [[ -x $target_binary ]]; then
             if  [[ $hook == atclone-<-> ]] || [[ $ZINIT[annex-multi-flag:pull-active] -ge  2 ]]; then
-              +zinit-message "{info}[{pre}linkbin annex{info}] {rst}${${${hook:#*atclone-<->}:+Re-c}:-C}reated the {obj}$fnam{data2} ${${${sym#-P}:+soft}:-hard}{msg} link and set +x on the {obj}${target_binary:t}{msg} binary{rst}"
+              +zinit-message "{m} linkbin annex: ${${${hook:#*atclone-<->}:+Re-c}:-C}reated the {obj}$fnam{rst} ${${${sym#-P}:+soft}:-hard} link and set +x on the ${target_binary:t} binary"
             elif (( !OPTS[opt_-u,--urge] )) && [[ $hook == atclone-<-> || $ZINIT[annex-multi-flag:pull-active] -eq 1 ]]; then
-              +zinit-message "{info}[{pre}linkbin annex{info}] {error}${${${hook:#*atclone-<->}:+Re-c}:-C}reated the {obj}$fnam{data2} ${${${sym#-P}:+soft}:-hard}{error} link however the {obj}${target_binary:t}{error} binary does not exist or failed to set +x on it{rst}"
+              +zinit-message "{m} linkbin annex: ${${${hook:#*atclone-<->}:+Re-c}:-C}reated the {obj}$fnam{rst} ${${${sym#-P}:+soft}:-hard} link however the {obj}${target_binary:t}{rst} binary does not exist or failed to set +x on it"
             else
               continue
             fi
           fi
         else
-          +zinit-message "{info}[{pre}linkbin annex{info}] {error}Something went wrong creating the {obj}$fnam{error} link{rst}"
+          +zinit-message "{e} linkbin annex: Failed to create {obj}$fnam{rst} link"
         fi
       }
     }
