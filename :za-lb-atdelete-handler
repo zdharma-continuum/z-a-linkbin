@@ -36,9 +36,6 @@ if (( ${+ICE[lbin]} )) {
     for lbin ( $lbins "" ) {
       [[ ${lbin[1]} = "!" ]] && sym="-s"
 
-    for lbin ( $lbins "" ) {
-      [[ ${lbin[1]} = "!" ]] && sym="-s"
-
       if [[ -z $lbin && ${#lbins} -eq 0 ]] || [[ $lbin = "!" && ${#lbins} -eq 1 ]]; then
         local -a files
         integer i=0
