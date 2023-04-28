@@ -8,33 +8,29 @@
 emulate -RL zsh
 setopt extendedglob warncreateglobal typesetsilent noshortloops nullglob
 
-if [[ "$1" = plugin ]]
-then
+if [[ "$1" = plugin ]]; then
     local type="$1" user="$2" plugin="$3" id_as="$4" dir="${5#%}" hook="$6"
 else
     local type="$1" url="$2" id_as="$3" dir="${4#%}" hook="$5"
 fi
-if (( ${+ICE[sbin]} ))
-then
+
+if (( ${+ICE[sbin]} )); then
     (( !OPTS[opt_-q,--quiet] )) && +zinit-message "{w} linkbin annex: {ice}sbin{msg} ice detected, not doing anything"
     return
 fi
-if (( ${+ICE[lbin]} ))
-then
+
+if (( ${+ICE[lbin]} )); then
     (
         local lbin sym="-P"
         local -a lbins srcdst
         lbins=(${(s.;.)ICE[lbin]})
         builtin cd -q "$dir" || return
-        for lbin in $lbins ""
-        do
+        for lbin in $lbins ""; do
             [[ ${lbin[1]} = "!" ]] && sym="-s"
-            if [[ -z $lbin && ${#lbins} -eq 0 ]] || [[ $lbin = "!" && ${#lbins} -eq 1 ]]
-            then
+            if [[ -z $lbin && ${#lbins} -eq 0 ]] || [[ $lbin = "!" && ${#lbins} -eq 1 ]]; then
                 local -a files
                 integer i=0
-                while [[ ! -f $files[1] && $i -lt 10 ]]
-                do
+                while [[ ! -f $files[1] && $i -lt 10 ]]; do
                     ((i++))
                     case $i in
                         (1) files=($dir/${id_as:t}(Nnon.))  ;;
@@ -60,38 +56,29 @@ then
             @zinit-substitute "srcdst[1]" "srcdst[2]"
             local -a fnames
             local fname
-            if [[ $srcdst[1] != /* ]]
-            then
+            if [[ $srcdst[1] != /* ]]; then
                 eval "fnames=(**/${srcdst[1]}(Nnon-.))"
             else
                 eval "fnames=(${srcdst[1]}(Nnon-.))"
             fi
-            if (( !${#fnames} ))
-            then
+            if (( !${#fnames} )); then
                 +zinit-message "{e} linkbin annex: {ice}lbin{rst} ice ({glob}$lbin{rst}) did not match any files"
                 continue
             fi
-            for fname in $fnames
-            do
+            for fname in $fnames; do
                 srcdst[1]="$fname"
                 local target_binary="${${(M)srcdst[1]:#/*}:-$dir/${srcdst[1]}}"
                 local fnam="${srcdst[2]:-${srcdst[1]:t}}"
                 local file="$ZPFX/bin/$fnam"
                 command chmod +x "$target_binary"
                 command ln -f "$sym" "$target_binary" "$file"
-                if [[ -x $file ]]
-                then
-                    if (( !OPTS[opt_-q,--quiet] )) && [[ -x $target_binary ]]
-                    then
-                        if [[ $hook == atclone-<-> ]] || [[ $ZINIT[annex-multi-flag:pull-active] -ge 2 ]]
-                        then
+                if [[ -x $file ]]; then
+                    if [[ -x $target_binary ]]; then
+                        if (( !OPTS[opt_-q,--quiet] )) && [[ $hook == atclone-<-> || $ZINIT[annex-multi-flag:pull-active] -ge 1 ]]; then
                             +zinit-message "{m} linkbin annex: ${${${hook:#*atclone-<->}:+Re-c}:-C}reated {obj}$fnam{rst} ${${${sym#-P}:+soft}:-hard} link & set +x on the {obj}${target_binary:t}{rst} binary"
-                        elif (( !OPTS[opt_-u,--urge] )) && [[ $hook == atclone-<-> || $ZINIT[annex-multi-flag:pull-active] -eq 1 ]]
-                        then
-                            +zinit-message "{m} linkbin annex: ${${${hook:#*atclone-<->}:+Re-c}:-C}reated {obj}$fnam{rst} ${${${sym#-P}:+soft}:-hard} link, but {obj}${target_binary:t}{rst} binary does not exist or failed to set +x on it"
-                        else
-                            continue
                         fi
+                    else
+                            +zinit-message "{m} linkbin annex: ${${${hook:#*atclone-<->}:+Re-c}:-C}reated {obj}$fnam{rst} ${${${sym#-P}:+soft}:-hard} link, but {obj}${target_binary:t}{rst} binary does not exist or failed to set +x on it"
                     fi
                 else
                     +zinit-message "{e} linkbin annex: Failed to create {obj}$fnam{rst} link"
