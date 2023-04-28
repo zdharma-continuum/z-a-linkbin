@@ -7,6 +7,7 @@
 
 emulate -RL zsh
 setopt extendedglob warncreateglobal typesetsilent noshortloops nullglob
+
 if [[ "$1" = plugin ]]
 then
     local type="$1" user="$2" plugin="$3" id_as="$4" dir="${5#%}" hook="$6"
@@ -67,7 +68,7 @@ then
             fi
             if (( !${#fnames} ))
             then
-                +zinit-message "{e} linkbin annex: The {ice}lbin{error} ice ({glob}$lbin{rst}) did not match any files"
+                +zinit-message "{e} linkbin annex: {ice}lbin{rst} ice ({glob}$lbin{rst}) did not match any files"
                 continue
             fi
             for fname in $fnames
@@ -84,10 +85,10 @@ then
                     then
                         if [[ $hook == atclone-<-> ]] || [[ $ZINIT[annex-multi-flag:pull-active] -ge 2 ]]
                         then
-                            +zinit-message "{m} linkbin annex: ${${${hook:#*atclone-<->}:+Re-c}:-C}reated the {obj}$fnam{rst} ${${${sym#-P}:+soft}:-hard} link and set +x on the ${target_binary:t} binary"
+                            +zinit-message "{m} linkbin annex: ${${${hook:#*atclone-<->}:+Re-c}:-C}reated {obj}$fnam{rst} ${${${sym#-P}:+soft}:-hard} link & set +x on the {obj}${target_binary:t}{rst} binary"
                         elif (( !OPTS[opt_-u,--urge] )) && [[ $hook == atclone-<-> || $ZINIT[annex-multi-flag:pull-active] -eq 1 ]]
                         then
-                            +zinit-message "{m} linkbin annex: ${${${hook:#*atclone-<->}:+Re-c}:-C}reated the {obj}$fnam{rst} ${${${sym#-P}:+soft}:-hard} link however the {obj}${target_binary:t}{rst} binary does not exist or failed to set +x on it"
+                            +zinit-message "{m} linkbin annex: ${${${hook:#*atclone-<->}:+Re-c}:-C}reated {obj}$fnam{rst} ${${${sym#-P}:+soft}:-hard} link, but {obj}${target_binary:t}{rst} binary does not exist or failed to set +x on it"
                         else
                             continue
                         fi
