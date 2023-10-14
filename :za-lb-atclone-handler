@@ -22,30 +22,31 @@ fi
 if (( ${+ICE[lbin]} )); then
     (
         local lbin sym="-P"
-        local -a lbins srcdst
+        local -aU lbins srcdst
         lbins=(${(s.;.)ICE[lbin]})
         builtin cd -q "$dir" || return
         for lbin in $lbins ""; do
             [[ ${lbin[1]} = "!" ]] && sym="-s"
             if [[ -z $lbin && ${#lbins} -eq 0 ]] || [[ $lbin = "!" && ${#lbins} -eq 1 ]]; then
-                local -a files
+                local -aU files
                 integer i=0
-                while [[ ! -f $files[1] && $i -lt 10 ]]; do
+                while [[ ! -f $files[1] && $i -lt 12 ]]; do
                     ((i++))
                     case $i in
                         (1) files=($dir/${id_as:t}(Nnon.))  ;;
                         (2) [[ -n $plugin ]] && files=($dir/$plugin(Nnon.))  ;;
                         (3) [[ -n $url ]] && files=($dir/${url:t}(Nnon.))  ;;
-                        (4) files=($dir/*/*(*Nnon.:t))  ;;
-                        (5) files=($dir/**/*(*Nnon.:t))  ;;
-                        (6) files=($dir/**/${id_as:t}(Nnon.))  ;;
-                        (7) [[ -n $plugin ]] && files=($dir/**/$plugin(Nnon.))  ;;
-                        (8) [[ -n $url ]] && files=($dir/**/${url:t}(Nnon.))  ;;
-                        (9) files=($dir/**/*(*Nnon.:t))  ;;
-                        (10) +zinit-message "{e} linkbin annex: The automatic-empty {ice}lbin{rst} ice didn't find any executable files" ;;
+                        (4) files=(*/**/bin/${id_as:t}(.xnN))  ;;
+                        (5) files=($dir/*/bin/*(*xNnon.:t)) ;;
+                        (6) files=($dir/*/bin/*(xN.)) ;;
+                        (8) files=($dir/**/bin/${id_as:t}(Nnon.))  ;;
+                        (9) [[ -n $plugin ]] && files=($dir/**/$plugin(Nnon.))  ;;
+                        (10) [[ -n $url ]] && files=($dir/**/${url:t}(Nnon.))  ;;
+                        (11) files=($dir/**/*(*Nnon.:t))  ;;
+                        (12) +zinit-message "{e} linkbin annex: The automatic-empty {ice}lbin{rst} ice didn't find any executable files" ;;
                     esac
                 done
-                [[ $i -gt 9 ]] && break
+                # [[ $i -gt 11 ]] && break
                 lbin=$files[1]
             else
                 lbin=${lbin#!}
@@ -54,7 +55,7 @@ if (( ${+ICE[lbin]} )); then
             srcdst=(${(@s.->.)lbin})
             srcdst=("${srcdst[@]//((#s)[[:space:]]##|[[:space:]]##(#e))/}")
             @zinit-substitute "srcdst[1]" "srcdst[2]"
-            local -a fnames
+            local -aU fnames
             local fname
             if [[ $srcdst[1] != /* ]]; then
                 eval "fnames=(**/${srcdst[1]}(Nnon-.))"
