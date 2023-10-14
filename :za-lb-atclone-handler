@@ -30,20 +30,23 @@ if (( ${+ICE[lbin]} )); then
             if [[ -z $lbin && ${#lbins} -eq 0 ]] || [[ $lbin = "!" && ${#lbins} -eq 1 ]]; then
                 local -aU files
                 integer i=0
-                while [[ ! -f $files[1] && $i -lt 12 ]]; do
+                while [[ ! -f $files[1] && $i -lt 14 ]]; do
                     ((i++))
                     case $i in
-                        (1) files=($dir/${id_as:t}(Nnon.))  ;;
-                        (2) [[ -n $plugin ]] && files=($dir/$plugin(Nnon.))  ;;
-                        (3) [[ -n $url ]] && files=($dir/${url:t}(Nnon.))  ;;
-                        (4) files=(*/**/bin/${id_as:t}(.xnN))  ;;
-                        (5) files=($dir/*/bin/*(*xNnon.:t)) ;;
-                        (6) files=($dir/*/bin/*(xN.)) ;;
-                        (8) files=($dir/**/bin/${id_as:t}(Nnon.))  ;;
-                        (9) [[ -n $plugin ]] && files=($dir/**/$plugin(Nnon.))  ;;
-                        (10) [[ -n $url ]] && files=($dir/**/${url:t}(Nnon.))  ;;
-                        (11) files=($dir/**/*(*Nnon.:t))  ;;
-                        (12) +zinit-message "{e} linkbin annex: The automatic-empty {ice}lbin{rst} ice didn't find any executable files" ;;
+                         (1) files=($dir/${id_as:t}(Nnon.))  ;;
+                         (2) [[ -n $plugin ]] && files=($dir/$plugin(Nnon.))  ;;
+                         (3) [[ -n $plugin ]] && files=($dir/**/$plugin(Nnon.))  ;;
+                         (4) [[ -n $url ]] && files=($dir/${url:t}(Nnon.))  ;;
+                         (5) [[ -n $url ]] && files=($dir/**/${url:t}(Nnon.))  ;;
+                         (6) files=($dir/**/*(*Nnon.:t))  ;;
+                         (7) files=($dir/**/bin/${id_as:t}(Nnon.))  ;;
+                         (8) files=($dir/*/bin/*(*xNnon.:t)) ;;
+                         (9) files=($dir/*/bin/*(xN.)) ;;
+                        (10) files=($dir/bin/${id_as:t}(xN.)) ;;
+                        (11) files=($dir/bin/*(*xNnon.:t)) ;;
+                        (12) files=(*/**/bin/${id_as:t}(.xnN))  ;;
+                        (13) files=(*/bin/${id_as:t}(.xnN))  ;;
+                        (14) +zinit-message "{e} linkbin annex: The automatic-empty {ice}lbin{rst} ice didn't find any executable files" ;;
                     esac
                 done
                 # [[ $i -gt 11 ]] && break
