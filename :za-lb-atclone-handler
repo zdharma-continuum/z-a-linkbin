@@ -5,38 +5,30 @@
 # Modified work Copyright (c) 2022 zdharma-continuum and contributors
 #
 
-
+emulate -LR zsh
+setopt extendedglob warncreateglobal typesetsilent noshortloops
 
 if [[ "$1" = plugin ]]; then
-    local type="$1" user="$2" plugin="$3" id_as="$4" dir="${5#%}" hook="$6"
+    local type="$1" user="$2" plugin="$3" id_as="$4" dir="${5#%}" hook="$6" 
 else
-    local type="$1" url="$2" id_as="$3" dir="${4#%}" hook="$5"
+    local type="$1" url="$2" id_as="$3" dir="${4#%}" hook="$5" 
 fi
 
-# if (( ${+ICE[sbin]} )); then
-
-    # if (( ${+ICE[sbin]} || ${+ZINIT_ICE[sbin]} )); then
-+zi-log -- "{dbg} {b}linkbin annex{rst}: {ice}sbin{rst} ice detected, not doing anything"
-        # return
-    # fi
-
 if (( ${+ICE[lbin]} )); then
-    if (( ${+ICE[sbin]} || ${+ZINIT_ICE[sbin]} )); then
-        +zi-log -- "{dbg} {b}linkbin annex{rst}: {ice}sbin{rst} ice detected, not doing anything"
-        return
+    if (( ${+ICE[sbin]} )); then
+        +zi-log "{m} {b}linkbin annex{rst}: {ice}sbin{rst} ice detected, not doing anything"
+        return 0
     fi
-    emulate -RL zsh
-    setopt extendedglob warncreateglobal typesetsilent noshortloops
     (
-        local lbin sym="-P"
+        local lbin sym="-P" 
         local -a lbins srcdst
-        lbins=(${(s.;.)ICE[lbin]})
+        lbins=(${(s.;.)ICE[lbin]}) 
         builtin cd -q "$dir" || return
         for lbin in $lbins ""; do
-            [[ ${lbin[1]} = "!" ]] && sym="-s"
+            [[ ${lbin[1]} = "!" ]] && sym="-s" 
             if [[ -z $lbin && ${#lbins} -eq 0 ]] || [[ $lbin = "!" && ${#lbins} -eq 1 ]]; then
                 local -a files
-                integer i=0
+                integer i=0 
                 while [[ ! -f $files[1] && $i -lt 10 ]]; do
                     ((i++))
                     case $i in
@@ -53,13 +45,13 @@ if (( ${+ICE[lbin]} )); then
                     esac
                 done
                 [[ $i -gt 9 ]] && break
-                lbin=$files[1]
+                lbin=$files[1] 
             else
-                lbin=${lbin#!}
+                lbin=${lbin#!} 
                 [[ -z $lbin ]] && continue
             fi
-            srcdst=(${(@s.->.)lbin})
-            srcdst=("${srcdst[@]//((#s)[[:space:]]##|[[:space:]]##(#e))/}")
+            srcdst=(${(@s.->.)lbin}) 
+            srcdst=("${srcdst[@]//((#s)[[:space:]]##|[[:space:]]##(#e))/}") 
             @zinit-substitute "srcdst[1]" "srcdst[2]"
             local -a fnames
             local fname
@@ -73,10 +65,10 @@ if (( ${+ICE[lbin]} )); then
                 continue
             fi
             for fname in $fnames; do
-                srcdst[1]="$fname"
-                local target_binary="${${(M)srcdst[1]:#/*}:-$dir/${srcdst[1]}}"
-                local fnam="${srcdst[2]:-${srcdst[1]:t}}"
-                local file="$ZPFX/bin/$fnam"
+                srcdst[1]="$fname" 
+                local target_binary="${${(M)srcdst[1]:#/*}:-$dir/${srcdst[1]}}" 
+                local fnam="${srcdst[2]:-${srcdst[1]:t}}" 
+                local file="$ZPFX/bin/$fnam" 
                 command chmod +x "$target_binary"
                 command ln -f "$sym" "$target_binary" "$file"
                 if [[ -x $file ]]; then
@@ -85,7 +77,7 @@ if (( ${+ICE[lbin]} )); then
                             +zi-log "{m} {b}linkbin annex{rst}: ${${${hook:#*atclone-<->}:+Re-c}:-C}reated {file}$fnam{rst} ${${${sym#-P}:+soft}:-hard} link & set +x on the {file}${target_binary:t}{rst} binary"
                         fi
                     else
-                            +zi-log "{m} {b}linkbin annex{rst}: ${${${hook:#*atclone-<->}:+Re-c}:-C}reated {file}$fnam{rst} ${${${sym#-P}:+soft}:-hard} link, but {file}${target_binary:t}{rst} binary does not exist or failed to set +x on it"
+                        +zi-log "{m} {b}linkbin annex{rst}: ${${${hook:#*atclone-<->}:+Re-c}:-C}reated {file}$fnam{rst} ${${${sym#-P}:+soft}:-hard} link, but {file}${target_binary:t}{rst} binary does not exist or failed to set +x on it"
                     fi
                 else
                     +zi-log "{e} {b}linkbin annex{rst}: Failed to create {file}$fnam{rst} link"
