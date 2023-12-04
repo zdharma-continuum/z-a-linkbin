@@ -8,53 +8,55 @@ emulate -LR zsh
 setopt extendedglob warncreateglobal typesetsilent noshortloops
 
 if [[ "$1" = plugin ]]; then
-    local type="$1" user="$2" plugin="$3" id_as="$4" dir="${5#%}" hook="$6" 
+    local type="$1" user="$2" plugin="$3" id_as="$4" dir="${5#%}" hook="$6"
 else
-    local type="$1" url="$2" id_as="$3" dir="${4#%}" hook="$5" 
+    local type="$1" url="$2" id_as="$3" dir="${4#%}" hook="$5"
 fi
 
 if (( ${+ICE[lbin]} )); then
-    # if (( ${+ICE[sbin]} || ${+ZINIT_ICE[sbin]} )); then
-    #     +zi-log "{m} {b}linkbin annex{rst}: {ice}sbin{rst} ice detected, not doing anything"
-    #     return
-    # fi
     if (( ${+ICE[sbin]} )); then
-        +zi-log "{m} {b}linkbin annex{rst}: {ice}sbin{rst} ice detected, not doing anything"
+        +zi-log "{m} {b}linkbin{rst}: {ice}sbin{rst} ice detected, not doing anything"
         return 0
     fi
     local -a lbins srcdst
-    lbins=(${(s.;.)ICE2[lbin]}) 
-    local lbin sym="-P" 
+    lbins=(${(s.;.)ICE2[lbin]})
+    local lbin sym="-P"
     (
         builtin cd -q "$dir" || return
         for lbin in $lbins ""; do
-            [[ ${lbin[1]} = "!" ]] && sym="-s" 
+            [[ ${lbin[1]} = "!" ]] && sym="-s"
             if [[ -z $lbin && ${#lbins} -eq 0 ]] || [[ $lbin = "!" && ${#lbins} -eq 1 ]]; then
                 local -a files
-                integer i=0 
-                while [[ ! -f $files[1] && $i -lt 10 ]]; do
+                integer i=0
+                while [[ ! -f $files[1] && $i -lt 14 ]]; do
                     ((i++))
                     case $i in
                         (1) files=($dir/${id_as:t}(Nnon.))  ;;
                         (2) [[ -n $plugin ]] && files=($dir/$plugin(Nnon.))  ;;
-                        (3) [[ -n $url ]] && files=($dir/${url:t}(Nnon.))  ;;
-                        (4) files=($dir/*/*(*Nnon.:t))  ;;
-                        (5) files=($dir/**/*(*Nnon.:t))  ;;
-                        (6) files=($dir/**/${id_as:t}(Nnon.))  ;;
-                        (7) [[ -n $plugin ]] && files=($dir/**/$plugin(Nnon.))  ;;
-                        (8) [[ -n $url ]] && files=($dir/**/${url:t}(Nnon.))  ;;
-                        (9) files=($dir/**/*(*Nnon.:t))  ;;
-                        (10) +zi-log "{e} {b}linkbin annex{rst}: {ice}lbin{rst} ice did not detect any executable files" ;;
+                        (3) [[ -n $plugin ]] && files=($dir/**/$plugin(Nnon.))  ;;
+                        (4) [[ -n $url ]] && files=($dir/${url:t}(Nnon.))  ;;
+                        (5) [[ -n $url ]] && files=($dir/**/${url:t}(Nnon.))  ;;
+                        (6) files=($dir/**/*(*Nnon.:t))  ;;
+                        (7) files=($dir/**/bin/${id_as:t}(Nnon.))  ;;
+                        (8) files=($dir/*/bin/*(*xNnon.:t))  ;;
+                        (9) files=($dir/*/bin/*(xN.))  ;;
+                        (10) files=($dir/bin/${id_as:t}(xN.))  ;;
+                        (11) files=($dir/bin/*(*xNnon.:t))  ;;
+                        (12) files=(*/**/bin/${id_as:t}(.xnN))  ;;
+                        (13) files=(*/bin/${id_as:t}(.xnN))  ;;
+                        (14) +zi-log "{e} {b}linkbin{rst}: {ice}lbin{rst} ice did not detect any executable files" ;;
                     esac
                 done
-                [[ $i -gt 9 ]] && break
-                lbin=$files[1] 
+                (( i==13 )) && continue
+                lbin=$files[1]
             else
-                lbin=${lbin#!} 
+                lbin=${lbin#!}
                 [[ -z $lbin ]] && continue
             fi
-            srcdst=(${(@s.->.)lbin}) 
-            srcdst=("${srcdst[@]//((#s)[[:space:]]##|[[:space:]]##(#e))/}") 
+            srcdst=(${(@s.->.)lbin})
+            +zi-log -- "{dbg} lbin: old ${#srcdst} ${(qqq)srcdst[@]}"
+            srcdst=("${${srcdst[@]##[[:blank:]]##}%%[[:blank:]]##}")
+            +zi-log -- "{dbg} lbin: new ${#srcdst} ${(qqq)srcdst[@]}"
             @zinit-substitute "srcdst[1]" "srcdst[2]"
             local -a fnames
             local fname
@@ -64,26 +66,25 @@ if (( ${+ICE[lbin]} )); then
                 eval "fnames=(${srcdst[1]}(Nnon-.))"
             fi
             if (( !${#fnames} )); then
-                +zi-log "{e} {b}linkbin annex{rst}: The {ice}lbin{rst} ice ({glob}$lbin{rst}) did not match any files"
+                +zi-log "{e} {b}linkbin{rst}: The {ice}lbin{rst} ice ({glob}$lbin{rst}) did not match any files"
                 continue
             fi
             for fname in $fnames; do
-                srcdst[1]="$fname" 
-                local fnam="${srcdst[2]:-${srcdst[1]:t}}" 
-                local file="$ZPFX/bin/$fnam" 
+                srcdst[1]="$fname"
+                local fnam="${srcdst[2]:-${srcdst[1]:t}}"
+                local file="$ZPFX/bin/$fnam"
                 if [[ -f $file ]]; then
                     command rm "$file"
                     if ! [[ -f $file ]]; then
-                        (( !OPTS[opt_-q,--quiet] )) && +zi-log "{m} {b}linkbin annex{rst}: Deleted {file}$fnam{rst} ${${${sym#-P}:+soft}:-hard} link"
+                        (( !OPTS[opt_-q,--quiet] )) && +zi-log "{m} {b}linkbin{rst}: Deleted {file}$fnam{rst} ${${${sym#-P}:+soft}:-hard} link"
                     else
-                        +zi-log "{e} {b}linkbin annex{rst}: Failed to delete {file}$fnam{rst} link"
+                        +zi-log "{e} {b}linkbin{rst}: Failed to delete {file}$fnam{rst} link"
                     fi
                 else
-                    +zi-log "{w} {b}linkbin annex{rst}: {file}$fnam{rst} ${${${sym#-P}:+soft}:-hard} link not found in \$ZPFX/bin"
+                    +zi-log "{w} {b}linkbin{rst}: {file}$fnam{rst} ${${${sym#-P}:+soft}:-hard} link not found in \$ZPFX/bin"
                 fi
             done
         done
     )
 fi
-
 # vim: set expandtab filetype=zsh shiftwidth=4 softtabstop=4 tabstop=4:

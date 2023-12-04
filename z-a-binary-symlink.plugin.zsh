@@ -11,9 +11,13 @@
 0="${${ZERO:-${0:#$ZSH_ARGZERO}}:-${(%):-%N}}"
 0="${${(M)0:#/*}:-$PWD/$0}"
 
-[[ -d $ZPFX/bin ]] || command mkdir -p "$ZPFX/bin"
+if [[ ! -d $ZPFX/bin ]]; then
+  command mkdir -p "$ZPFX/bin"
+fi
 
-autoload :za-lb-atclone-handler :za-lb-atdelete-handler
+autoload -Uz \
+  :za-lb-atclone-handler \
+  :za-lb-atdelete-handler
 
 # An empty stub to fill the help handler fields
 :za-lb-null-handler() { :; }
@@ -33,4 +37,3 @@ autoload :za-lb-atclone-handler :za-lb-atdelete-handler
   hook:atdelete-50 \
   :za-lb-atdelete-handler \
   :za-lb-null-handler
-
