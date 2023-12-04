@@ -18,37 +18,38 @@ if (( ${+ICE[lbin]} )); then
         +zi-log "{m} {b}linkbin{rst}: {ice}sbin{rst} ice detected, not doing anything"
         return 0
     fi
-    local -a lbins srcdst
-    lbins=(${(s.;.)ICE2[lbin]})
-    local lbin sym="-P"
     (
+        local lbin sym="-P"
+        local -a lbins srcdst
+        lbins=(${(s.;.)ICE[lbin]})
         builtin cd -q "$dir" || return
         for lbin in $lbins ""; do
             [[ ${lbin[1]} = "!" ]] && sym="-s"
             if [[ -z $lbin && ${#lbins} -eq 0 ]] || [[ $lbin = "!" && ${#lbins} -eq 1 ]]; then
-                local -a files
+                local -aU files
                 integer i=0
                 while [[ ! -f $files[1] && $i -lt 14 ]]; do
                     ((i++))
                     case $i in
-                        (1) files=($dir/${id_as:t}(Nnon.))  ;;
+                        (1) files=($dir/${id_as:t}(xN.))  ;;
                         (2) [[ -n $plugin ]] && files=($dir/$plugin(Nnon.))  ;;
                         (3) [[ -n $plugin ]] && files=($dir/**/$plugin(Nnon.))  ;;
                         (4) [[ -n $url ]] && files=($dir/${url:t}(Nnon.))  ;;
                         (5) [[ -n $url ]] && files=($dir/**/${url:t}(Nnon.))  ;;
-                        (6) files=($dir/**/*(*Nnon.:t))  ;;
+                        (6) files=($dir/**/${id_as:t}(xN.))  ;;
                         (7) files=($dir/**/bin/${id_as:t}(Nnon.))  ;;
                         (8) files=($dir/*/bin/*(*xNnon.:t))  ;;
                         (9) files=($dir/*/bin/*(xN.))  ;;
                         (10) files=($dir/bin/${id_as:t}(xN.))  ;;
                         (11) files=($dir/bin/*(*xNnon.:t))  ;;
-                        (12) files=(*/**/bin/${id_as:t}(.xnN))  ;;
+                        (12) files=($dir/${id_as:t}(xN.))  ;;
                         (13) files=(*/bin/${id_as:t}(.xnN))  ;;
                         (14) +zi-log "{e} {b}linkbin{rst}: {ice}lbin{rst} ice did not detect any executable files" ;;
                     esac
                 done
-                (( i==13 )) && continue
+                +zi-log -- "{dbg} lbin: ${i} found files: ${files[@]}"
                 lbin=$files[1]
+                [[ $i -gt 13 ]] && break
             else
                 lbin=${lbin#!}
                 [[ -z $lbin ]] && continue
@@ -71,6 +72,9 @@ if (( ${+ICE[lbin]} )); then
             fi
             for fname in $fnames; do
                 srcdst[1]="$fname"
+                if [[ $target_binary =~ ${id_as:t} ]] && [[ $fname != $srcdst[1] ]]; then
+                    srcdst[2]="${id_as:t}"
+                fi
                 local fnam="${srcdst[2]:-${srcdst[1]:t}}"
                 local file="$ZPFX/bin/$fnam"
                 if [[ -f $file ]]; then

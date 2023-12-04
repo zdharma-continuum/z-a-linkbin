@@ -44,8 +44,8 @@ if (( ${+ICE[lbin]} )); then
                         (14) +zi-log "{e} {b}linkbin{rst}: {ice}lbin{rst} ice did not detect any executable files" ;;
                     esac
                 done
+                lbin=$files[1]
                 [[ $i -gt 13 ]] && break
-                lbin="$files[1]"
             else
                 lbin=${lbin#!}
                 [[ -z $lbin ]] && continue
@@ -68,6 +68,9 @@ if (( ${+ICE[lbin]} )); then
             for fname in $fnames; do
                 srcdst[1]="$fname"
                 local target_binary="${${(M)srcdst[1]:#/*}:-$dir/${srcdst[1]}}"
+                if [[ $target_binary =~ ${id_as:t} ]] && [[ $fname != $srcdst[1] ]]; then
+                    srcdst[2]="${id_as:t}"
+                fi
                 local fnam="${srcdst[2]:-${srcdst[1]:t}}"
                 local file="$ZPFX/bin/$fnam"
                 command chmod +x "$target_binary"
