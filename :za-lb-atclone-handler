@@ -33,19 +33,19 @@ if (( ${+ICE[lbin]} )); then
                         (3) [[ -n $plugin ]] && files=($dir/**/$plugin(Nnon.))  ;;
                         (4) [[ -n $url ]] && files=($dir/${url:t}(Nnon.))  ;;
                         (5) [[ -n $url ]] && files=($dir/**/${url:t}(Nnon.))  ;;
-                        (6) files=($dir/**/${id_as:t}(xN.))  ;;
+                        (6) files=($dir/**/${id_as:t}(xNon.))  ;;
                         (7) files=($dir/**/bin/${id_as:t}(Nnon.))  ;;
-                        (8) files=($dir/*/bin/*(*xNnon.:t))  ;;
+                        (8) files=($dir/*${id_as:t}/(.xNon))  ;;
                         (9) files=($dir/*/bin/*(xN.))  ;;
                         (10) files=($dir/bin/${id_as:t}(xN.))  ;;
                         (11) files=($dir/bin/*(*xNnon.:t))  ;;
-                        (12) files=($dir/${id_as:t}*(xN.))  ;;
+                        (12) files=($dir/*${id_as:t}*(xNn.))  ;;
                         (13) files=($dir/bin/${id_as:t}(.xnN))  ;;
                         (14) +zi-log "{e} {b}linkbin{rst}: {ice}lbin{rst} ice did not detect any executable files" ;;
                     esac
                 done
-                lbin=$files[1]
                 [[ $i -gt 13 ]] && break
+                lbin=$files[1]
             else
                 lbin=${lbin#!}
                 [[ -z $lbin ]] && continue
