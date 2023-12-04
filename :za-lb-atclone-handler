@@ -28,19 +28,19 @@ if (( ${+ICE[lbin]} )); then
                 while [[ ! -f $files[1] && $i -lt 14 ]]; do
                     ((i++))
                     case $i in
-                        (1) files=($dir/${id_as:t}(Nnon.))  ;;
+                        (1) files=($dir/${id_as:t}(xN.))  ;;
                         (2) [[ -n $plugin ]] && files=($dir/$plugin(Nnon.))  ;;
                         (3) [[ -n $plugin ]] && files=($dir/**/$plugin(Nnon.))  ;;
                         (4) [[ -n $url ]] && files=($dir/${url:t}(Nnon.))  ;;
                         (5) [[ -n $url ]] && files=($dir/**/${url:t}(Nnon.))  ;;
-                        (6) files=($dir/**/*(*Nnon.:t))  ;;
+                        (6) files=($dir/**/${id_as:t}(xN.))  ;;
                         (7) files=($dir/**/bin/${id_as:t}(Nnon.))  ;;
                         (8) files=($dir/*/bin/*(*xNnon.:t))  ;;
                         (9) files=($dir/*/bin/*(xN.))  ;;
                         (10) files=($dir/bin/${id_as:t}(xN.))  ;;
                         (11) files=($dir/bin/*(*xNnon.:t))  ;;
-                        (12) files=(*/**/bin/${id_as:t}(.xnN))  ;;
-                        (13) files=(*/bin/${id_as:t}(.xnN))  ;;
+                        (12) files=($dir/${id_as:t}*(xN.))  ;;
+                        (13) files=($dir/bin/${id_as:t}(.xnN))  ;;
                         (14) +zi-log "{e} {b}linkbin{rst}: {ice}lbin{rst} ice did not detect any executable files" ;;
                     esac
                 done
