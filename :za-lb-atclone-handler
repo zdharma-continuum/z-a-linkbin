@@ -25,27 +25,26 @@ if (( ${+ICE[lbin]} )); then
             if [[ -z $lbin && ${#lbins} -eq 0 ]] || [[ $lbin = "!" && ${#lbins} -eq 1 ]]; then
                 local -aU files
                 integer i=0
-                while [[ ! -f $files[1] && $i -lt 14 ]]; do
+                while [[ ! -f $files[1] && $i -lt 13 ]]; do
                     ((i++))
                     case $i in
-                        (1) files=($dir/${id_as:t}(xN.))  ;;
+                        (1) files=($dir/${id_as:t}(.xNOLY1))  ;;
                         (2) [[ -n $plugin ]] && files=($dir/$plugin(Nnon.))  ;;
                         (3) [[ -n $plugin ]] && files=($dir/**/$plugin(Nnon.))  ;;
                         (4) [[ -n $url ]] && files=($dir/${url:t}(Nnon.))  ;;
                         (5) [[ -n $url ]] && files=($dir/**/${url:t}(Nnon.))  ;;
-                        (6) files=($dir/**/${id_as:t}(xNon.))  ;;
-                        (7) files=($dir/**/bin/${id_as:t}(Nnon.))  ;;
-                        (8) files=($dir/*${id_as:t}/(.xNon))  ;;
-                        (9) files=($dir/*/bin/*(xN.))  ;;
-                        (10) files=($dir/bin/${id_as:t}(xN.))  ;;
-                        (11) files=($dir/bin/*(*xNnon.:t))  ;;
-                        (12) files=($dir/*${id_as:t}*(xNn.))  ;;
-                        (13) files=($dir/bin/${id_as:t}(.xnN))  ;;
-                        (14) +zi-log "{e} {b}linkbin{rst}: {ice}lbin{rst} ice did not detect any executable files" ;;
+                        (6) files=($dir/${id_as:t}(.xNOLY1))  ;;
+                        (7) files=($dir/bin/${id_as:t}(.xNOLY1))  ;;
+                        (8) files=($dir/${id_as:t}*(.xNOLY1))  ;;
+                        (9) files=($dir/*${id_as:t}*(.xNOLY1))  ;;
+                        (10) files=($dir/**/bin/${id_as:t}(.xNOLY1))  ;;
+                        (11) files=($dir/bin/${id_as:t}*(.xNOLY1))  ;;
+                        (12) files=($dir/**/bin/${id_as:t}(.xNOLY1))  ;;
+                        (13) +zi-log "{e} {b}linkbin{rst}: {ice}lbin{rst} ice did not detect any executable files" ;;
                     esac
                 done
                 lbin="$files[1]"
-                [[ $i -gt 13 ]] && break
+                [[ $i -gt 12 ]] && break
             else
                 lbin=${lbin#!}
                 [[ -z $lbin ]] && continue

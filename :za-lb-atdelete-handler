@@ -48,37 +48,36 @@ if (( ${+ICE[lbin]} )); then
                     esac
                 done
                 lbin="$files[1]"
-                +zi-log -- "{dbg} lbin: ${i} found files: ${files[@]}"
                 [[ $i -gt 13 ]] && break
             else
                 lbin=${lbin#!}
                 [[ -z $lbin ]] && continue
             fi
             srcdst=(${(@s.->.)lbin})
-            +zi-log -- "{dbg} lbin: old ${#srcdst} ${(qqq)srcdst[@]}"
             srcdst=("${${srcdst[@]##[[:blank:]]##}%%[[:blank:]]##}")
-            +zi-log -- "{dbg} lbin: new ${#srcdst} ${(qqq)srcdst[@]}"
+            +zi-log -- "{dbg} lbin: srcdst ${#srcdst} ${srcdst[@]}"
             @zinit-substitute "srcdst[1]" "srcdst[2]"
             local -a fnames
             local fname
-            if [[ ${srcdst[1]} != /* ]]; then
+            if [[ $srcdst[1] != /* ]]; then
                 eval "fnames=(**/${srcdst[1]}(Nnon-.))"
             else
                 eval "fnames=(${srcdst[1]}(Nnon-.))"
             fi
             if (( !${#fnames} )); then
-                +zi-log "{e} {b}linkbin{rst}: The {ice}lbin{rst} ice ({glob}$lbin{rst}) did not match any files"
+                +zi-log "{e} {b}linkbin{rst}: {ice}lbin{rst} ice ({glob}$lbin{rst}) did not match any files"
                 continue
             fi
             for fname in $fnames; do
                 srcdst[1]="$fname"
+                local target_binary="${${(M)srcdst[1]:#/*}:-$dir/${srcdst[1]}}"
                 if [[ ${target_binary:t} =~ ${id_as:t} ]] || [[ ${target_binary:t} != ${srcdst[1]:t} ]]; then
                     srcdst[2]="${id_as:t}"
                 fi
                 local fnam="${srcdst[2]:-${srcdst[1]:t}}"
                 local file="$ZPFX/bin/$fnam"
                 if [[ -f $file ]]; then
-                    command rm "$file"
+                    command rm -f "$file"
                     if ! [[ -f $file ]]; then
                         (( !OPTS[opt_-q,--quiet] )) && +zi-log "{m} {b}linkbin{rst}: Deleted {file}$fnam{rst} ${${${sym#-P}:+soft}:-hard} link"
                     else
