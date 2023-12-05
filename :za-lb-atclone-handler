@@ -61,6 +61,7 @@ if (( ${+ICE[lbin]} )); then
             for fname in $fnames; do
                 srcdst[1]="$fname"
                 local target_binary="${${(M)srcdst[1]:#/*}:-$dir/${srcdst[1]}}"
+                +zi-log "{dbg} [[ ${target_binary:t} =~ ${id_as:t} ]] || [[ ${target_binary:t} != ${srcdst[1]:t}"
                 if [[ ${target_binary:t} =~ ${id_as:t} ]] || [[ ${target_binary:t} != ${srcdst[1]:t} ]]; then
                     srcdst[2]="${id_as:t}"
                 fi
