@@ -28,26 +28,20 @@ if (( ${+ICE[lbin]} )); then
             if [[ -z $lbin && ${#lbins} -eq 0 ]] || [[ $lbin = "!" && ${#lbins} -eq 1 ]]; then
                 local -aU files
                 integer i=0
-                while [[ ! -f $files[1] && $i -lt 13 ]]; do
+                while [[ ! -f $files[1] && $i -lt 7 ]]; do
                     ((i++))
                     case $i in
-                        (1) files=($dir/**/*(.*xNOL))  ;;
-                        (2) [[ -n $plugin ]] && files=($dir/$plugin(x*Nnon.))  ;;
-                        (3) [[ -n $plugin ]] && files=($dir/**/$plugin(x*Nnon.))  ;;
-                        (4) [[ -n $url ]] && files=($dir/${url:t}(x*Nnon.))  ;;
-                        (5) [[ -n $url ]] && files=($dir/**/${url:t}(xNnon.))  ;;
-                        (6) files=($dir/**/${id_as:t}(*xNOL.))  ;;
-                        (7) files=($dir/bin/${id_as:t}(*xNOL.))  ;;
-                        (8) files=($dir/**/${id_as:t}*(*xNOL.))  ;;
-                        (9) files=($dir/**/${id_as:t}*(*xNOL.))  ;;
-                        (10) files=($dir/**/bin/${id_as:t}(*xNOL.))  ;;
-                        (11) files=($dir/bin/${id_as:t}*(.*xNOL))  ;;
-                        (12) files=($dir/**/bin/${id_as:t}(.x*NOL))  ;;
-                        (13) +zi-log "{e} {b}linkbin{rst}: {ice}lbin{rst} ice did not detect any executable files" ;;
+                        (1) files=($dir/(*/)#*(xN.))  ;;
+                        (2) [[ -n $plugin ]] && files=($dir/$plugin(Nnon.))  ;;
+                        (3) [[ -n $plugin ]] && files=($dir/**/$plugin(Nnon.))  ;;
+                        (4) [[ -n $url ]] && files=($dir/${url:t}(Nnon.))  ;;
+                        (5) [[ -n $url ]] && files=($dir/**/${url:t}(Nnon.))  ;;
+                        (6) files=($dir/(*/)#*${id_as:t}*(xN.)) ;;
+                        (7) +zi-log "{e} {b}linkbin{rst}: {ice}lbin{rst} ice did not detect any executable files" ;;
                     esac
                 done
                 lbin="$files[1]"
-                [[ $i -gt 12 ]] && break
+                [[ $i -gt 6 ]] && break
             else
                 lbin=${lbin#!}
                 [[ -z $lbin ]] && continue
