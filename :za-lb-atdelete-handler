@@ -31,12 +31,12 @@ if (( ${+ICE[lbin]} )); then
                 while [[ ! -f $files[1] && $i -lt 7 ]]; do
                     ((i++))
                     case $i in
-                        (1) files=($dir/(*/)#*(xN.))  ;;
+                        (1) files=($dir/(*/)#*(.xNOL))  ;;
                         (2) [[ -n $plugin ]] && files=($dir/$plugin(Nnon.))  ;;
                         (3) [[ -n $plugin ]] && files=($dir/**/$plugin(Nnon.))  ;;
                         (4) [[ -n $url ]] && files=($dir/${url:t}(Nnon.))  ;;
                         (5) [[ -n $url ]] && files=($dir/**/${url:t}(Nnon.))  ;;
-                        (6) files=($dir/(*/)#*${id_as:t}*(xN.)) ;;
+                        (6) files=($dir/(*/)#*${id_as:t}*(xNOL)) ;;
                         (7) +zi-log "{e} {b}linkbin{rst}: {ice}lbin{rst} ice did not detect any executable files" ;;
                     esac
                 done
