@@ -16,7 +16,7 @@ fi
 
 if (( ${+ICE[lbin]} )); then
     if (( ${+ICE[sbin]} )); then
-        +zi-log "{m} {b}linkbin annex{rst}: {ice}sbin{rst} ice detected, not doing anything"
+        +zi-log "{m} {b}linkbin{rst}: {ice}sbin{rst} ice detected, not doing anything"
         return 0
     fi
     (
@@ -41,7 +41,7 @@ if (( ${+ICE[lbin]} )); then
                         (7) [[ -n $plugin ]] && files=($dir/**/$plugin(Nnon.))  ;;
                         (8) [[ -n $url ]] && files=($dir/**/${url:t}(Nnon.))  ;;
                         (9) files=($dir/**/*(*Nnon.:t))  ;;
-                        (10) +zi-log "{e} {b}linkbin annex{rst}: {ice}lbin{rst} ice did not detect any executable files" ;;
+                        (10) +zi-log "{e} {b}linkbin{rst}: {ice}lbin{rst} ice did not detect any executable files" ;;
                     esac
                 done
                 [[ $i -gt 9 ]] && break
@@ -61,7 +61,7 @@ if (( ${+ICE[lbin]} )); then
                 eval "fnames=(${srcdst[1]}(Nnon-.))"
             fi
             if (( !${#fnames} )); then
-                +zi-log "{e} {b}linkbin annex{rst}: {ice}lbin{rst} ice ({glob}$lbin{rst}) did not match any files"
+                +zi-log "{e} {b}linkbin{rst}: {ice}lbin{rst} ice ({glob}$lbin{rst}) did not match any files"
                 continue
             fi
             for fname in $fnames; do
@@ -74,13 +74,13 @@ if (( ${+ICE[lbin]} )); then
                 if [[ -x $file ]]; then
                     if [[ -x $target_binary ]]; then
                         if (( !OPTS[opt_-q,--quiet] )) && [[ $hook == atclone-<-> || $ZINIT[annex-multi-flag:pull-active] -ge 1 ]]; then
-                            +zi-log "{m} {b}linkbin annex{rst}: ${${${hook:#*atclone-<->}:+Re-c}:-C}reated {file}$fnam{rst} ${${${sym#-P}:+soft}:-hard} link & set +x on the {file}${target_binary:t}{rst} binary"
+                            +zi-log "{m} {b}linkbin{rst}: ${${${hook:#*atclone-<->}:+Re-c}:-C}reated {file}$fnam{rst} ${${${sym#-P}:+soft}:-hard} link & set +x on the {file}${target_binary:t}{rst} binary"
                         fi
                     else
-                        +zi-log "{m} {b}linkbin annex{rst}: ${${${hook:#*atclone-<->}:+Re-c}:-C}reated {file}$fnam{rst} ${${${sym#-P}:+soft}:-hard} link, but {file}${target_binary:t}{rst} binary does not exist or failed to set +x on it"
+                        +zi-log "{m} {b}linkbin{rst}: ${${${hook:#*atclone-<->}:+Re-c}:-C}reated {file}$fnam{rst} ${${${sym#-P}:+soft}:-hard} link, but {file}${target_binary:t}{rst} binary does not exist or failed to set +x on it"
                     fi
                 else
-                    +zi-log "{e} {b}linkbin annex{rst}: Failed to create {file}$fnam{rst} link"
+                    +zi-log "{e} {b}linkbin{rst}: Failed to create {file}$fnam{rst} link"
                 fi
             done
         done
