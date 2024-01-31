@@ -6,32 +6,26 @@
 
 emulate -LR zsh
 setopt extendedglob warncreateglobal typesetsilent noshortloops
-
 if [[ "$1" = plugin ]]; then
-    local type="$1" user="$2" plugin="$3" id_as="$4" dir="${5#%}" hook="$6" 
+    local type="$1" user="$2" plugin="$3" id_as="$4" dir="${5#%}" hook="$6"
 else
-    local type="$1" url="$2" id_as="$3" dir="${4#%}" hook="$5" 
+    local type="$1" url="$2" id_as="$3" dir="${4#%}" hook="$5"
 fi
-
 if (( ${+ICE[lbin]} )); then
-    # if (( ${+ICE[sbin]} || ${+ZINIT_ICE[sbin]} )); then
-    #     +zi-log "{m} {b}linkbin{rst}: {ice}sbin{rst} ice detected, not doing anything"
-    #     return
-    # fi
     if (( ${+ICE[sbin]} )); then
         +zi-log "{m} {b}linkbin{rst}: {ice}sbin{rst} ice detected, not doing anything"
         return 0
     fi
     local -a lbins srcdst
-    lbins=(${(s.;.)ICE2[lbin]}) 
-    local lbin sym="-P" 
+    lbins=(${(s.;.)ICE2[lbin]})
+    local lbin sym="-P"
     (
         builtin cd -q "$dir" || return
         for lbin in $lbins ""; do
-            [[ ${lbin[1]} = "!" ]] && sym="-s" 
+            [[ ${lbin[1]} = "!" ]] && sym="-s"
             if [[ -z $lbin && ${#lbins} -eq 0 ]] || [[ $lbin = "!" && ${#lbins} -eq 1 ]]; then
                 local -a files
-                integer i=0 
+                integer i=0
                 while [[ ! -f $files[1] && $i -lt 10 ]]; do
                     ((i++))
                     case $i in
@@ -48,13 +42,13 @@ if (( ${+ICE[lbin]} )); then
                     esac
                 done
                 [[ $i -gt 9 ]] && break
-                lbin=$files[1] 
+                lbin=$files[1]
             else
-                lbin=${lbin#!} 
+                lbin=${lbin#!}
                 [[ -z $lbin ]] && continue
             fi
-            srcdst=(${(@s.->.)lbin}) 
-            srcdst=("${srcdst[@]//((#s)[[:space:]]##|[[:space:]]##(#e))/}") 
+            srcdst=(${(@s.->.)lbin})
+            srcdst=("${(MS)srcdst[@]##[[:graph:]]*[[:graph:]]}")
             @zinit-substitute "srcdst[1]" "srcdst[2]"
             local -a fnames
             local fname
@@ -68,9 +62,9 @@ if (( ${+ICE[lbin]} )); then
                 continue
             fi
             for fname in $fnames; do
-                srcdst[1]="$fname" 
-                local fnam="${srcdst[2]:-${srcdst[1]:t}}" 
-                local file="$ZPFX/bin/$fnam" 
+                srcdst[1]="$fname"
+                local fnam="${srcdst[2]:-${srcdst[1]:t}}"
+                local file="$ZPFX/bin/$fnam"
                 if [[ -f $file ]]; then
                     command rm "$file"
                     if ! [[ -f $file ]]; then
