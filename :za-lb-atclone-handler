@@ -44,12 +44,17 @@ if (( ${+ICE[lbin]} )); then
                     esac
                 done
                 [[ $i -gt 9 ]] && break
-                lbin=$files[1]
+                lbin="${files[1]}"
             else
                 lbin=${lbin#!}
                 [[ -z $lbin ]] && continue
             fi
-            srcdst=(${(@s.->.)lbin} ${id_as:t})
+            srcdst=(${(@s.->.)lbin})
+            if [[ -n ${(M)srcdst[1]##${id_as:t}} ]]; then
+                srcdst+=(${(M)srcdst[1]##${id_as:t}})
+            else
+                srcdst+=(${srcdst[1]:t})
+            fi
             srcdst=("${(MS)srcdst[@]##[[:graph:]]*[[:graph:]]}")
             +zi-log "{dbg} ${#srcdst} | ${(qq@)srcdst} |"
             @zinit-substitute "srcdst[1]" "srcdst[2]"
