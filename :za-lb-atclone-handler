@@ -49,8 +49,9 @@ if (( ${+ICE[lbin]} )); then
                 lbin=${lbin#!}
                 [[ -z $lbin ]] && continue
             fi
+            +zi-log "{dbg} lbin: [${#lbin} | ${(qq)lbin}]"
             srcdst=(${(@s.->.)lbin})
-            +zi-log "{dbg} ${#srcdst} | ${(qq@)srcdst} |"
+            +zi-log "{dbg} srcdst: [${#srcdst} | ${(qq@)srcdst}]"
             local bin_name="${srcdst[1]:t}"
             if [[ -n ${${srcdst[1]:t}//${${${srcdst[1]:t}##${id_as:t}}%%${id_as:t}}/} ]]; then
                 srcdst+=("${${srcdst[1]:t}//${${${srcdst[1]:t}##${id_as:t}}%%${id_as:t}}/}")
