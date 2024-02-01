@@ -50,8 +50,10 @@ if (( ${+ICE[lbin]} )); then
                 [[ -z $lbin ]] && continue
             fi
             srcdst=(${(@s.->.)lbin})
-            if [[ -n ${srcdst[1]//${${srcdst[1]##${id_as:t}}%%${id_as:t}}/} ]]; then
-                srcdst+=("${srcdst[1]//${${srcdst[1]##${id_as:t}}%%${id_as:t}}/}")
+            +zi-log "{dbg} ${#srcdst} | ${(qq@)srcdst} |"
+            local bin_name="${srcdst[1]:t}"
+            if [[ -n ${${srcdst[1]:t}//${${${srcdst[1]:t}##${id_as:t}}%%${id_as:t}}/} ]]; then
+                srcdst+=("${${srcdst[1]:t}//${${${srcdst[1]:t}##${id_as:t}}%%${id_as:t}}/}")
             else
                 srcdst+=("${srcdst[1]:t}")
             fi
