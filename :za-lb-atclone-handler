@@ -49,9 +49,9 @@ if (( ${+ICE[lbin]} )); then
                 lbin=${lbin#!}
                 [[ -z $lbin ]] && continue
             fi
-            +zi-log "{dbg} lbin: [${#lbin} | ${(qq)lbin}]"
+            +zi-log "{dbg} lbin: ${(qq)lbin}]"
             srcdst=(${(@s.->.)lbin})
-            +zi-log "{dbg} srcdst: [${#srcdst} | ${(qq@)srcdst}]"
+            +zi-log "{dbg} srcdst 0: [${#srcdst} | ${(qq@)srcdst}]"
             local bin_name="${srcdst[1]:t}"
             if [[ -n ${${srcdst[1]:t}//${${${srcdst[1]:t}##${id_as:t}}%%${id_as:t}}/} ]]; then
                 srcdst+=("${${srcdst[1]:t}//${${${srcdst[1]:t}##${id_as:t}}%%${id_as:t}}/}")
@@ -59,7 +59,7 @@ if (( ${+ICE[lbin]} )); then
                 srcdst+=("${srcdst[1]:t}")
             fi
             srcdst=("${(MS)srcdst[@]##[[:graph:]]*[[:graph:]]}")
-            +zi-log "{dbg} ${#srcdst} | ${(qq@)srcdst} |"
+            +zi-log "{dbg} srcdst 1: [${#srcdst} | ${(qq@)srcdst}]"
             @zinit-substitute "srcdst[1]" "srcdst[2]"
             local -a fnames
             local fname
