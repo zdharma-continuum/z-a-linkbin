@@ -21,29 +21,29 @@ if (( ${+ICE[lbin]} )); then
         local lbin sym="-P"
         local -a lbins srcdst
         lbins=(${(s.;.)ICE[lbin]})
-        builtin cd -q "$dir" || return
+        builtin cd -q "${dir}" || return
         for lbin in ${lbins} ""; do
             [[ ${lbin[1]} = "!" ]] && sym="-s"
-            if [[ -z $lbin && ${#lbins} -eq 0 ]] || [[ $lbin = "!" && ${#lbins} -eq 1 ]]; then
+            if [[ -z ${lbin} && ${#lbins} -eq 0 ]] || [[ ${lbin} = "!" && ${#lbins} -eq 1 ]]; then
                 integer i=0
                 local -aU files=( **/*(.xN) )
                 +zi-log "{dbg} ${#files} files | ${(qq@)files} |"
-                while [[ ! -f $files[1] && $i -lt 10 ]]; do
+                while [[ ! -f ${files[1]} && ${i} -lt 10 ]]; do
                     ((i++))
-                    case $i in
-                        (1) files=($dir/${id_as:t}(Nnon.))  ;;
-                        (2) [[ -n $plugin ]] && files=($dir/$plugin(Nnon.))  ;;
-                        (3) [[ -n $url ]] && files=($dir/${url:t}(Nnon.))  ;;
-                        (4) files=($dir/*/*(*Nnon.:t))  ;;
-                        (5) files=($dir/**/*(*Nnon.:t))  ;;
-                        (6) files=($dir/**/${id_as:t}(Nnon.))  ;;
-                        (7) [[ -n $plugin ]] && files=($dir/**/$plugin(Nnon.))  ;;
-                        (8) [[ -n $url ]] && files=($dir/**/${url:t}(Nnon.))  ;;
-                        (9) files=($dir/**/*(*Nnon.:t))  ;;
+                    case ${i} in
+                        (1) files=(${dir}/${id_as:t}(Nnon.))  ;;
+                        (2) [[ -n ${plugin} ]] && files=(${dir}/${plugin}(Nnon.))  ;;
+                        (3) [[ -n ${url} ]] && files=(${dir}/${url:t}(Nnon.))  ;;
+                        (4) files=(${dir}/*/*(xNnon.:t))  ;;
+                        (5) files=(${dir}/**/*(*Nnon.:t))  ;;
+                        (6) files=(${dir}/**/${id_as:t}(xNnon.))  ;;
+                        (7) [[ -n ${plugin} ]] && files=(${dir}/**/${plugin}(Nnon.))  ;;
+                        (8) [[ -n ${url} ]] && files=(${dir}/**/${url:t}(Nnon.))  ;;
+                        (9) files=(${dir}/**/*(*Nnon.:t))  ;;
                         (10) +zi-log "{e} {b}linkbin{rst}: {ice}lbin{rst} ice did not detect any executable files" ;;
                     esac
                 done
-                [[ $i -gt 9 ]] && break
+                [[ ${i} -gt 9 ]] && break
                 lbin="${files[1]}"
             else
                 lbin=${lbin#!}
@@ -52,11 +52,11 @@ if (( ${+ICE[lbin]} )); then
             +zi-log "{dbg} lbin: ${(qq)lbin}]"
             srcdst=(${(@s.->.)lbin})
             +zi-log "{dbg} srcdst 0: [${#srcdst} | ${(qq@)srcdst}]"
-            local bin_name="${srcdst[1]:t}"
-            if [[ -n ${${srcdst[1]:t}//${${${srcdst[1]:t}##${id_as:t}}%%${id_as:t}}/} ]]; then
-                srcdst+=("${${srcdst[1]:t}//${${${srcdst[1]:t}##${id_as:t}}%%${id_as:t}}/}")
+            local bin="${srcdst[1]:t}" name="${id_as:t}"
+            if [[ -n ${${bin}//${${${bin}##${name}}%%${name}}/} ]]; then
+                srcdst+=("${${bin}//${${${bin}##${name}}%%${name}}/}")
             else
-                srcdst+=("${srcdst[1]:t}")
+                srcdst+=("${bin}")
             fi
             srcdst=("${(MS)srcdst[@]##[[:graph:]]*[[:graph:]]}")
             +zi-log "{dbg} srcdst 1: [${#srcdst} | ${(qq@)srcdst}]"
@@ -73,17 +73,17 @@ if (( ${+ICE[lbin]} )); then
                 continue
             fi
             for fname in $fnames; do
-                srcdst[1]="$fname"
+                srcdst[1]="${fname}"
                 local target_binary="${${(M)srcdst[1]:#/*}:-$dir/${srcdst[1]}}"
                 local fnam="${srcdst[2]:-${srcdst[1]:t}}"
-                local file="$ZPFX/bin/$fnam"
+                local file="${ZPFX}/bin/${fnam}"
                 {
-                    command chmod +x "$target_binary"
-                    command ln -f "$sym" "$target_binary" "$file"
+                    command chmod +x "${target_binary}" && \
+                    command ln -f "${sym}" "${target_binary}" "${file}" && \
                     rehash
                 }
-                if [[ -x $file ]]; then
-                    if [[ -x $target_binary ]]; then
+                if [[ -x ${file} ]]; then
+                    if [[ -x ${target_binary} ]]; then
                         if (( !OPTS[opt_-q,--quiet] )) && [[ $hook == atclone-<-> || $ZINIT[annex-multi-flag:pull-active] -ge 1 ]]; then
                             +zi-log "{m} {b}linkbin{rst}: ${${${hook:#*atclone-<->}:+Re-c}:-C}reated {file}$fnam{rst} ${${${sym#-P}:+soft}:-hard} link & set +x on the {file}${target_binary:t}{rst} binary"
                         fi
